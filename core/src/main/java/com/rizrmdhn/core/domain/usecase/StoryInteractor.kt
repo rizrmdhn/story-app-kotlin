@@ -18,5 +18,5 @@ class StoryInteractor(
         token: String
     ) = storyRepository.getStories(page, size, location, token)
 
-    override fun getStoryDetail(id: Int, token: String) = storyRepository.getStoryDetail(id, token)
+    override fun getStoryDetail(id: String, token: String) = storyRepository.getStoryDetail(id, token)
 }

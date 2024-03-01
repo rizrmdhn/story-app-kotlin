@@ -3,10 +3,10 @@ package com.rizrmdhn.core.data.source.remote.response
 data class GetDetailResponse(
 	val error: Boolean,
 	val message: String,
-	val story: Story
+	val story: DetailStory
 )
 
-data class Story(
+data class DetailStory(
 	val photoUrl: String,
 	val createdAt: String,
 	val name: String,

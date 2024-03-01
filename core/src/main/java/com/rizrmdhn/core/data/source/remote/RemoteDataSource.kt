@@ -4,7 +4,7 @@ import com.rizrmdhn.core.data.source.remote.network.ApiResponse
 import com.rizrmdhn.core.data.source.remote.network.ApiService
 import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
 import com.rizrmdhn.core.data.source.remote.response.LoginResult
-import com.rizrmdhn.core.data.source.remote.response.Story
+import com.rizrmdhn.core.data.source.remote.response.DetailStory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -76,7 +76,7 @@ class RemoteDataSource(
     fun getStoryDetail(
         id: String,
         token: String
-    ): Flow<ApiResponse<Story>> {
+    ): Flow<ApiResponse<DetailStory>> {
         return flow {
             try {
                 val response = apiService.getStoryDetail(

@@ -3,6 +3,7 @@ package com.rizrmdhn.core.domain.repository
 import com.rizrmdhn.core.data.Resource
 import com.rizrmdhn.core.data.source.remote.response.LoginResult
 import com.rizrmdhn.core.domain.model.Story
+import com.rizrmdhn.core.domain.model.StoryDetails
 import kotlinx.coroutines.flow.Flow
 
 interface IStoryRepository {
@@ -12,5 +13,5 @@ interface IStoryRepository {
 
     fun getStories(page: Int, size: Int, location: Int, token: String): Flow<Resource<List<Story>>>
 
-    fun getStoryDetail(id: Int, token: String): Flow<Resource<Story>>
+    fun getStoryDetail(id: String, token: String): Flow<Resource<StoryDetails>>
 }
