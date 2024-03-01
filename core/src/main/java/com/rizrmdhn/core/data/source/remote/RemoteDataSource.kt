@@ -1,14 +1,22 @@
 package com.rizrmdhn.core.data.source.remote
 
+import android.util.Log
+import com.google.gson.JsonObject
 import com.rizrmdhn.core.data.source.remote.network.ApiResponse
 import com.rizrmdhn.core.data.source.remote.network.ApiService
 import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
-import com.rizrmdhn.core.data.source.remote.response.LoginResult
 import com.rizrmdhn.core.data.source.remote.response.DetailStory
+import com.rizrmdhn.core.data.source.remote.response.LoginResponse
+import com.rizrmdhn.core.data.source.remote.response.RegisterResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.RequestBody
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 
 
 class RemoteDataSource(
@@ -16,33 +24,65 @@ class RemoteDataSource(
 ) {
 
     fun login(
-        body: Map<String, String>
-    ): Flow<ApiResponse<LoginResult>> {
+        body: RequestBody
+    ): Flow<ApiResponse<LoginResponse>> {
         return flow {
             try {
                 val response = apiService.login(
                     body
                 )
-                val data = response.loginResult
-                emit(ApiResponse.Success(data))
+                if (response.error) {
+                    emit(ApiResponse.Error(response.message))
+                } else {
+                    emit(ApiResponse.Success(response))
+                }
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val exception: HttpException = e
+                    val response = exception.response()
+                    try {
+                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
+                        emit(ApiResponse.Error(jsonObject.optString("message")))
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    } catch (e1: IOException) {
+                        e1.printStackTrace()
+                    }
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
             }
         }.flowOn(Dispatchers.IO)
     }
 
     fun register(
-        body: Map<String, String>
-    ): Flow<ApiResponse<Boolean>> {
+        body: RequestBody
+    ): Flow<ApiResponse<RegisterResponse>> {
         return flow {
             try {
                 val response = apiService.register(
                     body
                 )
-                val data = response.error
-                emit(ApiResponse.Success(data))
+                if (response.error) {
+                    emit(ApiResponse.Error(response.message))
+                } else {
+                    emit(ApiResponse.Success(response))
+                }
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val exception: HttpException = e
+                    val response = exception.response()
+                    try {
+                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
+                        emit(ApiResponse.Error(jsonObject.optString("message")))
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    } catch (e1: IOException) {
+                        e1.printStackTrace()
+                    }
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
             }
         }.flowOn(Dispatchers.IO)
     }

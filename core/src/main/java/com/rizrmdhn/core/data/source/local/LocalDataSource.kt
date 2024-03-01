@@ -29,7 +29,9 @@ class LocalDataSource(
 
     suspend fun saveThemeSetting(isDarkMode: Boolean) = settingPreferences.saveThemeSetting(isDarkMode)
 
-    fun getAuthTokenType() = settingPreferences.getAuthToken()
+    fun getAccessToken() = settingPreferences.getAuthToken()
 
-    suspend fun saveAuthTokenType(token: String) = settingPreferences.saveAuthToken(token)
+    suspend fun saveAccessToken(token: String) = settingPreferences.saveAuthToken(token)
+
+    suspend fun removeAccessToken() = settingPreferences.removeAuthToken()
 }

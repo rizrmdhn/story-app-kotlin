@@ -1,10 +1,12 @@
 package com.rizrmdhn.core.data
 
+import com.google.gson.JsonObject
 import com.rizrmdhn.core.data.source.local.LocalDataSource
 import com.rizrmdhn.core.data.source.remote.RemoteDataSource
 import com.rizrmdhn.core.data.source.remote.network.ApiResponse
 import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
-import com.rizrmdhn.core.data.source.remote.response.LoginResult
+import com.rizrmdhn.core.data.source.remote.response.LoginResponse
+import com.rizrmdhn.core.data.source.remote.response.RegisterResponse
 import com.rizrmdhn.core.domain.model.Story
 import com.rizrmdhn.core.domain.model.StoryDetails
 import com.rizrmdhn.core.domain.repository.IStoryRepository
@@ -13,6 +15,8 @@ import com.rizrmdhn.core.utils.DataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class StoryRepository(
     private val remoteDataSource: RemoteDataSource,
@@ -20,13 +24,14 @@ class StoryRepository(
     private val appExecutors: AppExecutors
 ) : IStoryRepository {
 
-    override fun login(email: String, password: String): Flow<Resource<LoginResult>> {
+    override fun login(email: String, password: String): Flow<Resource<LoginResponse>> {
         return flow {
             emit(Resource.Loading())
-            val body = mapOf(
-                "email" to email,
-                "password" to password
-            )
+            val body = JsonObject().apply {
+                addProperty("email", email)
+                addProperty("password", password)
+            }.toString()
+                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
             remoteDataSource.login(body).collect { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Success -> {
@@ -46,13 +51,19 @@ class StoryRepository(
         }
     }
 
-    override fun register(email: String, password: String): Flow<Resource<Boolean>> {
+    override fun register(
+        name: String,
+        email: String,
+        password: String
+    ): Flow<Resource<RegisterResponse>> {
         return flow {
             emit(Resource.Loading())
-            val body = mapOf(
-                "email" to email,
-                "password" to password
-            )
+            val body = JsonObject().apply {
+                addProperty("name", email)
+                addProperty("email", email)
+                addProperty("password", password)
+            }.toString()
+                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
             remoteDataSource.register(body).collect { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Success -> {
@@ -119,5 +130,25 @@ class StoryRepository(
                 }
             }
         }
+    }
+
+    override fun getDarkMode(): Flow<Boolean> {
+        return localDataSource.getThemeSetting()
+    }
+
+    override suspend fun setDarkMode(isDarkMode: Boolean) {
+        localDataSource.saveThemeSetting(isDarkMode)
+    }
+
+    override fun getAccessToken(): Flow<String> {
+        return localDataSource.getAccessToken()
+    }
+
+    override suspend fun setAccessToken(token: String) {
+        localDataSource.saveAccessToken(token)
+    }
+
+    override suspend fun removeAccessToken() {
+        localDataSource.removeAccessToken()
     }
 }

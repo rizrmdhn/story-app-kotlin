@@ -42,4 +42,10 @@ class SettingPreferences(
             preferences[authKey] = token
         }
     }
+
+    suspend fun removeAuthToken() {
+        dataStore.edit { preferences ->
+            preferences.remove(authKey)
+        }
+    }
 }

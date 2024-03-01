@@ -9,7 +9,15 @@ class StoryInteractor(
 ) : StoryUseCase {
     override fun login(email: String, password: String) = storyRepository.login(email, password)
 
-    override fun register(email: String, password: String) = storyRepository.register(email, password)
+    override fun register(
+        name: String,
+        email: String,
+        password: String
+    ) = storyRepository.register(
+        name,
+        email,
+        password
+    )
 
     override fun getStories(
         page: Int,
@@ -18,5 +26,16 @@ class StoryInteractor(
         token: String
     ) = storyRepository.getStories(page, size, location, token)
 
-    override fun getStoryDetail(id: String, token: String) = storyRepository.getStoryDetail(id, token)
+    override fun getStoryDetail(id: String, token: String) =
+        storyRepository.getStoryDetail(id, token)
+
+    override fun getDarkMode() = storyRepository.getDarkMode()
+
+    override suspend fun setDarkMode(isDarkMode: Boolean) = storyRepository.setDarkMode(isDarkMode)
+
+    override fun getAccessToken() = storyRepository.getAccessToken()
+
+    override suspend fun setAccessToken(token: String) = storyRepository.setAccessToken(token)
+
+    override suspend fun removeAccessToken() = storyRepository.removeAccessToken()
 }

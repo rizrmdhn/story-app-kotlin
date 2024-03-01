@@ -19,7 +19,7 @@ android {
         minSdk = 31
         targetSdk = 34
 
-        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1\"")
+        buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
         buildConfigField("String", "BASE_URL_HOSTNAME", "\"story-api.dicoding.dev\"")
         buildConfigField("Boolean", "DEBUG", "$debug")
 

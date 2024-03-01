@@ -18,6 +18,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rizrmdhn.core.domain.model.Form
@@ -55,6 +56,8 @@ fun FormComp(
                     )
                 }
             },
+            visualTransformation = data.visualTransformation,
+            leadingIcon = data.leadingIcon,
             trailingIcon = {
                 if (data.isError) {
                     Icon(
@@ -63,6 +66,7 @@ fun FormComp(
                         tint = MaterialTheme.colorScheme.error
                     )
                 }
+                data.trailingIcon?.invoke()
             },
             modifier = Modifier
                 .width(280.dp)
@@ -116,6 +120,7 @@ fun DefaultLoginPreview() {
                     value = "",
                     onValueChange = {},
                     keyboardOptions = KeyboardOptions.Default,
+                    visualTransformation = VisualTransformation.None
                 ),
             ),
             buttonText = "Login",
@@ -136,7 +141,8 @@ fun DefaultDarkLoginPreview() {
                     placeholder = "Enter your username",
                     value = "",
                     onValueChange = {},
-                    keyboardOptions = KeyboardOptions.Default
+                    keyboardOptions = KeyboardOptions.Default,
+                    visualTransformation = VisualTransformation.None
                 )
             ),
             buttonText = "Login",
