@@ -30,19 +30,22 @@ import com.rizrmdhn.storyapp.ui.navigation.Screen
 @Composable
 fun LoginScreen(
     navController: NavHostController,
+    onLogin: () -> Unit,
 ) {
     LoginContent(
         navigateToRegister = {
             navController.navigate(
                 Screen.Register.route
             )
-        }
+        },
+        onLogin = onLogin
     )
 }
 
 @Composable
 fun LoginContent(
     navigateToRegister: () -> Unit,
+    onLogin: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -87,7 +90,7 @@ fun LoginContent(
         FormComp(
             formData = formList,
             buttonText = "Login",
-            onClickButton = {},
+            onClickButton =  onLogin,
             isLoading = false
         )
         Spacer(
@@ -121,7 +124,8 @@ fun DefaultLoginPreview() {
         LoginScreen(
             navController = NavHostController(
                 LocalContext.current
-            )
+            ),
+            onLogin = {}
         )
     }
 }
@@ -133,7 +137,8 @@ fun DefaultDarkLoginPreview() {
         LoginScreen(
             navController = NavHostController(
                 LocalContext.current
-            )
+            ),
+            onLogin = {}
         )
     }
 }
