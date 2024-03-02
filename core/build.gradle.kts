@@ -1,6 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
-val debug: Boolean = gradleLocalProperties(rootDir, providers).getProperty("DEBUG")?.toBoolean() ?: false
+val debug: Boolean = gradleLocalProperties(rootDir).getProperty("DEBUG")?.toBoolean() ?: false
 
 plugins {
     id("com.android.library")
