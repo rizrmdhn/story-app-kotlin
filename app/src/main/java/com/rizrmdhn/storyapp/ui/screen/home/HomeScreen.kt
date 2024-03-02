@@ -52,10 +52,10 @@ fun HomeScreen(
                     topBar = {
                         TopBar(
                             navigateToAbout = {
-                                navController.navigate("about")
+                                navController.navigate(Screen.About.route)
                             },
                             navigateToSettings = {
-                                navController.navigate("settings")
+                                navController.navigate(Screen.Settings.route)
                             }
                         )
                     }
@@ -84,14 +84,14 @@ fun HomeScreen(
                         },
                         fetchingMore = isFetchingMore,
                         navigateToAbout = {
-                            navController.navigate(Screen.Home.route)
+                            navController.navigate(Screen.About.route)
                         },
                         navigateToSettings = {
-                            navController.navigate(Screen.Home.route)
+                            navController.navigate(Screen.Settings.route)
                         },
-                        navigateToDetail = {
+                        navigateToDetail = { id ->
                             navController.navigate(
-                                Screen.DetailStory.createRoute(it)
+                                Screen.DetailStory.createRoute(id)
                             )
                         },
                     )
