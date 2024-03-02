@@ -91,7 +91,7 @@ class StoryRepository(
         token: String
     ): Flow<Resource<List<Story>>> {
         return object : NetworkBoundResource<List<Story>, List<ListStoryItem>>() {
-            override fun shouldFetch(data: List<Story>?): Boolean = data.isNullOrEmpty()
+            override fun shouldFetch(data: List<Story>?): Boolean = true
 
             override fun loadFromDB(): Flow<List<Story>> {
                 return localDataSource.getAllStories().map {
@@ -150,5 +150,13 @@ class StoryRepository(
 
     override suspend fun removeAccessToken() {
         localDataSource.removeAccessToken()
+    }
+
+    override fun getLocaleSetting(): Flow<String> {
+        return localDataSource.getLocaleSetting()
+    }
+
+    override suspend fun setLocaleSetting(locale: String) {
+        localDataSource.saveLocaleSetting(locale)
     }
 }

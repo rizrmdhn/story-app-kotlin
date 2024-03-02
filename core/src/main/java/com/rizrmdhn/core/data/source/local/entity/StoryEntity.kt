@@ -26,10 +26,10 @@ class StoryEntity(
     val createdAt: String,
 
     @field:ColumnInfo(name = "lon")
-    val lon: Float,
+    val lon: Double,
 
     @field:ColumnInfo(name = "lat")
-    val lat: Float,
+    val lat: Double,
 
     @field:ColumnInfo(name = "isFavorite")
     var isFavorite: Boolean = false

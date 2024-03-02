@@ -28,6 +28,7 @@ import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreen
 import com.rizrmdhn.storyapp.ui.screen.register.RegisterScreen
 import org.koin.androidx.compose.koinViewModel
+import java.util.Locale
 
 @Composable
 fun StoryApp(
@@ -40,10 +41,11 @@ fun StoryApp(
     val token by viewModel.token.collectAsState()
     val loginIsLoading by viewModel.loginIsLoading.collectAsState()
     val registerIsLoading by viewModel.registerIsLoading.collectAsState()
-
+    val locale by viewModel.locale.collectAsState()
 
     viewModel.getAccessToken()
     viewModel.getDarkMode()
+    viewModel.getLocaleSetting(context)
     StoryAppTheme(
         darkTheme = darkMode
     ) {
@@ -97,6 +99,7 @@ fun StoryApp(
                             LoadingScreen()
                         }
                     }
+
                     false -> {
                         if (token.isEmpty()) {
                             composable(
@@ -116,7 +119,13 @@ fun StoryApp(
                                 RegisterScreen(
                                     navController = navController,
                                     onRegister = { name, email, password ->
-                                        viewModel.register(name, email, password, context, navController)
+                                        viewModel.register(
+                                            name,
+                                            email,
+                                            password,
+                                            context,
+                                            navController
+                                        )
                                     },
                                     isLoading = registerIsLoading
                                 )
@@ -126,11 +135,10 @@ fun StoryApp(
                                 Screen.Home.route
                             ) {
                                 HomeScreen(
-                                    token = token,
-                                    removeToken = {
-                                        viewModel.logout(
-                                            context = context,
-                                        )
+                                    navController = navController,
+                                    locale = locale,
+                                    setLocale = { newLocale ->
+                                        viewModel.setLocaleSetting(newLocale, context)
                                     }
                                 )
                             }

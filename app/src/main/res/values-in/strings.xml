@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StoryApp</string>
+    <string name="no_more_items">Tidak ada item lagi</string>
+    <string name="load_more">Tampilkan Lagi</string>
+</resources>

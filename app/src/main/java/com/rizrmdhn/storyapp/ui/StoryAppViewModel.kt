@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.rizrmdhn.core.common.Helpers
 import com.rizrmdhn.core.data.Resource
 import com.rizrmdhn.core.domain.usecase.StoryUseCase
 import com.rizrmdhn.storyapp.ui.navigation.Screen
@@ -30,6 +31,32 @@ class StoryAppViewModel(
     private val _registerIsLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val registerIsLoading: StateFlow<Boolean> get() = _registerIsLoading
 
+    private val _locale: MutableStateFlow<String> = MutableStateFlow("en")
+    val locale: StateFlow<String> get() = _locale
+
+    fun getLocaleSetting(context: Context) {
+        viewModelScope.launch {
+            storyUseCase.getLocaleSetting().collect {
+                _locale.value = it
+                Helpers.localeSelection(
+                    context = context,
+                    localeTag = it
+                )
+            }
+        }
+    }
+
+    fun setLocaleSetting(locale: String, context: Context) {
+        viewModelScope.launch {
+            storyUseCase.setLocaleSetting(locale)
+            _locale.value = locale
+            Helpers.localeSelection(
+                context = context,
+                localeTag = locale
+            )
+        }
+    }
+
 
     fun getDarkMode() {
         viewModelScope.launch {
@@ -53,12 +80,14 @@ class StoryAppViewModel(
                     is Resource.Loading -> {
                         _loginIsLoading.value = true
                     }
+
                     is Resource.Success -> {
                         _token.value = result.data?.loginResult?.token ?: ""
                         setAccessToken(result.data?.loginResult?.token ?: "")
                         _loginIsLoading.value = false
                         Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
                     }
+
                     is Resource.Error -> {
                         Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
                         _loginIsLoading.value = false
@@ -68,20 +97,32 @@ class StoryAppViewModel(
         }
     }
 
-    fun register(name: String, email: String, password: String, context: Context, navController: NavHostController) {
+    fun register(
+        name: String,
+        email: String,
+        password: String,
+        context: Context,
+        navController: NavHostController
+    ) {
         viewModelScope.launch {
             storyUseCase.register(name, email, password).collect { result ->
                 when (result) {
                     is Resource.Loading -> {
                         _registerIsLoading.value = true
                     }
+
                     is Resource.Success -> {
                         _registerIsLoading.value = false
-                        Toast.makeText(context, result.data?.message ?: "User Created" , Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            result.data?.message ?: "User Created",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navController.navigate(
                             Screen.Login.route
                         )
                     }
+
                     is Resource.Error -> {
                         Toast.makeText(context, result.message, Toast.LENGTH_SHORT).show()
                         _registerIsLoading.value = false

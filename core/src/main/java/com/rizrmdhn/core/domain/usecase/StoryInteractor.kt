@@ -38,4 +38,8 @@ class StoryInteractor(
     override suspend fun setAccessToken(token: String) = storyRepository.setAccessToken(token)
 
     override suspend fun removeAccessToken() = storyRepository.removeAccessToken()
+
+    override fun getLocaleSetting() = storyRepository.getLocaleSetting()
+
+    override suspend fun setLocaleSetting(locale: String) = storyRepository.setLocaleSetting(locale)
 }

@@ -34,4 +34,8 @@ class LocalDataSource(
     suspend fun saveAccessToken(token: String) = settingPreferences.saveAuthToken(token)
 
     suspend fun removeAccessToken() = settingPreferences.removeAuthToken()
+
+    fun getLocaleSetting() = settingPreferences.getLocaleSetting()
+
+    suspend fun saveLocaleSetting(locale: String) = settingPreferences.saveLocaleSetting(locale)
 }

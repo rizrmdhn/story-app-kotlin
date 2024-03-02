@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StoryApp</string>
+    <string name="no_more_items">No more items</string>
+    <string name="load_more">Load More</string>
 </resources>

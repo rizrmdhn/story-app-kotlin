@@ -108,7 +108,20 @@ class RemoteDataSource(
                     emit(ApiResponse.Empty)
                 }
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val exception: HttpException = e
+                    val response = exception.response()
+                    try {
+                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
+                        emit(ApiResponse.Error(jsonObject.optString("message")))
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    } catch (e1: IOException) {
+                        e1.printStackTrace()
+                    }
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
             }
         }.flowOn(Dispatchers.IO)
     }
@@ -126,7 +139,20 @@ class RemoteDataSource(
                 val data = response.story
                 emit(ApiResponse.Success(data))
             } catch (e: Exception) {
-                emit(ApiResponse.Error(e.toString()))
+                if (e is HttpException) {
+                    val exception: HttpException = e
+                    val response = exception.response()
+                    try {
+                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
+                        emit(ApiResponse.Error(jsonObject.optString("message")))
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    } catch (e1: IOException) {
+                        e1.printStackTrace()
+                    }
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
             }
         }.flowOn(Dispatchers.IO)
     }

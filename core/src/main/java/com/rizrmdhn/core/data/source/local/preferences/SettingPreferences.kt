@@ -18,6 +18,7 @@ class SettingPreferences(
 ) {
     private val themeKey = booleanPreferencesKey(Constants.themeKey)
     private val authKey = stringPreferencesKey(Constants.authKey)
+    private val localeKey = stringPreferencesKey(Constants.localeKey)
 
     fun getThemeSetting(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
@@ -46,6 +47,18 @@ class SettingPreferences(
     suspend fun removeAuthToken() {
         dataStore.edit { preferences ->
             preferences.remove(authKey)
+        }
+    }
+
+    fun getLocaleSetting(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[localeKey] ?: "en"
+        }
+    }
+
+    suspend fun saveLocaleSetting(locale: String) {
+        dataStore.edit { preferences ->
+            preferences[localeKey] = locale
         }
     }
 }

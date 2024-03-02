@@ -29,4 +29,8 @@ interface StoryUseCase {
     suspend fun setAccessToken(token: String)
 
     suspend fun removeAccessToken()
+
+    fun getLocaleSetting(): Flow<String>
+
+    suspend fun setLocaleSetting(locale: String)
 }
