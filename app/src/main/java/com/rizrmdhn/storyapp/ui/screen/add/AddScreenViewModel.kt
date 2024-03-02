@@ -44,7 +44,7 @@ class AddScreenViewModel(
         _description.value = description
     }
 
-    fun setUploadStatus(status: Boolean) {
+    private fun setUploadStatus(status: Boolean) {
         _isUploading.value = status
     }
 
