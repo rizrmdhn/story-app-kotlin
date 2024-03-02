@@ -38,8 +38,6 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     navController: NavHostController,
     viewModel: HomeScreenViewModel = koinViewModel(),
-    locale: String,
-    setLocale: (String) -> Unit
 ) {
     val moreItems by viewModel.loadMore.collectAsState()
     val isFetchingMore by viewModel.isFetchingMore.collectAsState()
@@ -52,8 +50,12 @@ fun HomeScreen(
                 Scaffold(
                     topBar = {
                         TopBar(
-                            locale = locale,
-                            setLocale = setLocale
+                            navigateToAbout = {
+                                navController.navigate("about")
+                            },
+                            navigateToSettings = {
+                                navController.navigate("settings")
+                            }
                         )
                     }
 
@@ -80,8 +82,12 @@ fun HomeScreen(
                             viewModel.setLoadMore(it)
                         },
                         fetchingMore = isFetchingMore,
-                        locale = locale,
-                        setLocale = setLocale
+                        navigateToAbout = {
+                            navController.navigate("about")
+                        },
+                        navigateToSettings = {
+                            navController.navigate("settings")
+                        }
                     )
                 }
             }
@@ -101,22 +107,22 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    modifier: Modifier = Modifier,
     story: List<Story>,
+    modifier: Modifier = Modifier,
+    navigateToAbout: () -> Unit,
+    navigateToSettings: () -> Unit,
     loadMore: () -> Unit,
     moreItems: Boolean,
     setMoreItem: (Boolean) -> Unit,
     fetchingMore: Boolean,
-    locale: String,
-    setLocale: (String) -> Unit
 ) {
     val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
             TopBar(
-                locale = locale,
-                setLocale = setLocale
+                navigateToAbout = navigateToAbout,
+                navigateToSettings = navigateToSettings
             )
         }
 
@@ -194,8 +200,6 @@ fun HomeScreenPreview() {
             navController = NavHostController(
                 context = LocalContext.current
             ),
-            locale = "en",
-            setLocale = {}
         )
     }
 }
@@ -208,8 +212,6 @@ fun HomeScreenDarkPreview() {
             navController = NavHostController(
                 context = LocalContext.current
             ),
-            locale = "en",
-            setLocale = {}
         )
     }
 }

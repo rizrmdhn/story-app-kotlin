@@ -1,6 +1,5 @@
 package com.rizrmdhn.storyapp.ui.components
 
-import android.content.Context
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
@@ -12,14 +11,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    context: Context = LocalContext.current,
-    locale: String,
-    setLocale: (String) -> Unit
+    navigateToAbout: () -> Unit,
+    navigateToSettings: () -> Unit
 ) {
     TopAppBar(
         title = {
@@ -28,8 +26,7 @@ fun TopBar(
         actions = {
             IconButton(
                 onClick = {
-                    if (locale == "id") setLocale("en")
-                    else setLocale("id")
+                    navigateToAbout()
                 }
             ) {
                 Icon(
@@ -37,7 +34,11 @@ fun TopBar(
                     contentDescription = "Info"
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(
+                onClick = {
+                    navigateToSettings()
+                }
+            ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings"

@@ -23,12 +23,13 @@ import androidx.navigation.compose.rememberNavController
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.navigation.Screen
+import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreen
 import com.rizrmdhn.storyapp.ui.screen.register.RegisterScreen
+import com.rizrmdhn.storyapp.ui.screen.settings.SettingScreen
 import org.koin.androidx.compose.koinViewModel
-import java.util.Locale
 
 @Composable
 fun StoryApp(
@@ -136,9 +137,34 @@ fun StoryApp(
                             ) {
                                 HomeScreen(
                                     navController = navController,
+                                )
+                            }
+                            composable(
+                                Screen.About.route
+                            ) {
+                                AboutScreen(
+                                    navigateBack = {
+                                        navController.popBackStack()
+                                    }
+                                )
+                            }
+                            composable(
+                                Screen.Settings.route
+                            ) {
+                                SettingScreen(
+                                    darkMode = darkMode,
+                                    setDarkMode = { newDarkMode ->
+                                        viewModel.setDarkMode(newDarkMode)
+                                    },
                                     locale = locale,
                                     setLocale = { newLocale ->
                                         viewModel.setLocaleSetting(newLocale, context)
+                                    },
+                                    onLogout = {
+                                        viewModel.logout(context)
+                                    },
+                                    navigateBack = {
+                                        navController.popBackStack()
                                     }
                                 )
                             }

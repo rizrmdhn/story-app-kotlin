@@ -3,4 +3,9 @@
     <string name="app_name">StoryApp</string>
     <string name="no_more_items">Tidak ada item lagi</string>
     <string name="load_more">Tampilkan Lagi</string>
+    <string name="about">Tentang</string>
+    <string name="dark_mode">Mode Gelap</string>
+    <string name="change_language">Ganti Bahasa</string>
+    <string name="settings">Pengaturan</string>
+    <string name="logout">Keluar</string>
 </resources>
