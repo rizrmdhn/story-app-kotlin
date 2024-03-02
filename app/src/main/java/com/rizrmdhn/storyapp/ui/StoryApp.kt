@@ -17,13 +17,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.rizrmdhn.core.common.Constants
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.navigation.Screen
 import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
+import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreen
@@ -166,6 +170,18 @@ fun StoryApp(
                                     navigateBack = {
                                         navController.popBackStack()
                                     }
+                                )
+                            }
+                            composable(
+                                route = Screen.DetailStory.route,
+                                arguments = listOf(navArgument(Constants.id) {
+                                    type = NavType.StringType
+                                })
+                            ) {
+                                val id = it.arguments?.getString(Constants.id) ?: ""
+                                DetailScreen(
+                                    storyId = id,
+                                    navController = navController
                                 )
                             }
                         }

@@ -9,7 +9,7 @@ data class Story(
     val createdAt: String,
     val name: String,
     val description: String,
-    val lon: Double,
+    val lon: Double?,
     val id: String,
-    val lat: Double
+    val lat: Double?
 ) : Parcelable

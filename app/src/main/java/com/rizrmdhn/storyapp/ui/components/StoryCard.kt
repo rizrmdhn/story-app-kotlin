@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,15 +41,18 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StoryCard(
     name: String,
     description: String,
     photoUrl: String,
     createdAt: String,
+    onGetDetailStory: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
+        onClick = onGetDetailStory,
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
@@ -249,7 +253,8 @@ fun StoryCardPreview() {
             name = "Name",
             description = "Description",
             photoUrl = "https://www.google.com",
-            createdAt = Helpers.getCurrentTime()
+            createdAt = Helpers.getCurrentTime(),
+            onGetDetailStory = {}
         )
     }
 }
@@ -262,7 +267,8 @@ fun StoryCardDarkPreview() {
             name = "Name",
             description = "Description",
             photoUrl = "https://www.google.com",
-            createdAt = Helpers.getCurrentTime()
+            createdAt = Helpers.getCurrentTime(),
+            onGetDetailStory = {}
         )
     }
 }

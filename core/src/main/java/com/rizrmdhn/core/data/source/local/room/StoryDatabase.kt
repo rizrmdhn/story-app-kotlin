@@ -8,7 +8,7 @@ import com.rizrmdhn.core.data.source.local.entity.StoryEntity
     entities = [
         StoryEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class StoryDatabase : RoomDatabase() {

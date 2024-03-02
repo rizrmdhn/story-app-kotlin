@@ -15,8 +15,8 @@ object DataMapper {
                 createdAt = it.createdAt,
                 name = it.name,
                 description = it.description,
-                lat = it.lat as Double,
-                lon = it.lon as Double,
+                lat = it.lat,
+                lon = it.lon,
                 photoUrl = it.photoUrl,
             )
             storyList.add(story)
@@ -52,8 +52,8 @@ object DataMapper {
         createdAt = input.createdAt,
         name = input.name,
         description = input.description,
-        lat = input.lat as Float,
-        lon = input.lon as Float,
+        lat = input.lat,
+        lon = input.lon,
         photoUrl = input.photoUrl,
     )
 }

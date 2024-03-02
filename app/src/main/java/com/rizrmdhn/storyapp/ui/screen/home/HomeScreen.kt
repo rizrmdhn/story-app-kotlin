@@ -32,6 +32,7 @@ import com.rizrmdhn.storyapp.ui.components.ErrorScreen
 import com.rizrmdhn.storyapp.ui.components.StoryCard
 import com.rizrmdhn.storyapp.ui.components.StoryCardLoader
 import com.rizrmdhn.storyapp.ui.components.TopBar
+import com.rizrmdhn.storyapp.ui.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -83,11 +84,16 @@ fun HomeScreen(
                         },
                         fetchingMore = isFetchingMore,
                         navigateToAbout = {
-                            navController.navigate("about")
+                            navController.navigate(Screen.Home.route)
                         },
                         navigateToSettings = {
-                            navController.navigate("settings")
-                        }
+                            navController.navigate(Screen.Home.route)
+                        },
+                        navigateToDetail = {
+                            navController.navigate(
+                                Screen.DetailStory.createRoute(it)
+                            )
+                        },
                     )
                 }
             }
@@ -111,6 +117,7 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToDetail: (String) -> Unit,
     loadMore: () -> Unit,
     moreItems: Boolean,
     setMoreItem: (Boolean) -> Unit,
@@ -155,6 +162,9 @@ fun HomeContent(
                         description = story.description,
                         photoUrl = story.photoUrl,
                         createdAt = story.createdAt,
+                        onGetDetailStory = {
+                            navigateToDetail(story.id)
+                        }
                     )
                 }
                 items(story.size) { index ->

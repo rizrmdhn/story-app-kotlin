@@ -29,7 +29,7 @@ class HomeScreenViewModel(
     private val _size: MutableStateFlow<Int> = MutableStateFlow(10)
     private val size: StateFlow<Int> get() = _size
 
-    private val _location: MutableStateFlow<Int> = MutableStateFlow(1)
+    private val _location: MutableStateFlow<Int> = MutableStateFlow(0)
     private val location: StateFlow<Int> get() = _location
 
     private val _isFetchingMore: MutableStateFlow<Boolean> = MutableStateFlow(false)
