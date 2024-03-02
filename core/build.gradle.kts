@@ -22,6 +22,7 @@ android {
         buildConfigField("String", "BASE_URL", "\"https://story-api.dicoding.dev/v1/\"")
         buildConfigField("String", "BASE_URL_HOSTNAME", "\"story-api.dicoding.dev\"")
         buildConfigField("Boolean", "DEBUG", "$debug")
+        buildConfigField("String" ,"APPLICATION_ID", "\"com.rizrmdhn.storyapp\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

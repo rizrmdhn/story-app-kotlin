@@ -1,6 +1,6 @@
 package com.rizrmdhn.core.data.source.remote.network
 
-import com.google.gson.JsonObject
+import com.rizrmdhn.core.data.source.remote.response.AddNewStoryResponse
 import com.rizrmdhn.core.data.source.remote.response.GetAllStoriesResponse
 import com.rizrmdhn.core.data.source.remote.response.GetDetailResponse
 import com.rizrmdhn.core.data.source.remote.response.LoginResponse
@@ -38,7 +38,7 @@ interface ApiService {
         @Part("lat") lat: RequestBody?,
         @Part("lon") long: RequestBody?,
         @Header("Authorization") token: String
-    ): RegisterResponse
+    ): AddNewStoryResponse
 
     @GET("stories")
     suspend fun getStories(

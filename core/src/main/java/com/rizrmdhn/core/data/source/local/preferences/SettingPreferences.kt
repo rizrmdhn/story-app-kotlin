@@ -11,14 +11,14 @@ import com.rizrmdhn.core.common.Constants
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.settings)
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Constants.SETTINGS)
 
 class SettingPreferences(
     private val dataStore: DataStore<Preferences>
 ) {
-    private val themeKey = booleanPreferencesKey(Constants.themeKey)
-    private val authKey = stringPreferencesKey(Constants.authKey)
-    private val localeKey = stringPreferencesKey(Constants.localeKey)
+    private val themeKey = booleanPreferencesKey(Constants.THEME_KEY)
+    private val authKey = stringPreferencesKey(Constants.AUTH_KEY)
+    private val localeKey = stringPreferencesKey(Constants.LOCALE_KEY)
 
     fun getThemeSetting(): Flow<Boolean> {
         return dataStore.data.map { preferences ->

@@ -56,8 +56,7 @@ class HomeScreenViewModel(
                 }
                 _storyList.addAll(filteredList?.sortedByDescending { sorted ->
                     sorted.createdAt
-                } ?: emptyList()
-                )
+                } ?: emptyList())
             }
         }
     }

@@ -2,6 +2,7 @@ package com.rizrmdhn.core.domain.usecase
 
 
 import com.rizrmdhn.core.domain.repository.IStoryRepository
+import java.io.File
 
 
 class StoryInteractor(
@@ -28,6 +29,20 @@ class StoryInteractor(
 
     override fun getStoryDetail(id: String, token: String) =
         storyRepository.getStoryDetail(id, token)
+
+    override fun addNewStory(
+        file: File,
+        description: String,
+        lat: Double?,
+        long: Double?,
+        token: String
+    ) = storyRepository.addNewStory(
+        file,
+        description,
+        lat,
+        long,
+        token
+    )
 
     override fun getDarkMode() = storyRepository.getDarkMode()
 

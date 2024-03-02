@@ -1,10 +1,9 @@
 package com.rizrmdhn.core.common
 
 object Constants {
-    const val id = "id"
-    const val settings = "settings"
-    const val localeKey = "locale_key"
-    const val themeKey = "theme_key"
-    const val authKey = "auth_key"
-    const val appName = "RestaurantApp"
+    const val ID = "id"
+    const val SETTINGS = "settings"
+    const val LOCALE_KEY = "locale_key"
+    const val THEME_KEY = "theme_key"
+    const val AUTH_KEY = "auth_key"
 }

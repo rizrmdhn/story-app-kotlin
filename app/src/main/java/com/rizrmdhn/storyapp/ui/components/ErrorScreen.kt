@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
-import com.rizrmdhn.core.data.Resource
-import com.rizrmdhn.core.domain.model.StoryDetails
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

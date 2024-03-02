@@ -8,4 +8,8 @@
     <string name="change_language">Ganti Bahasa</string>
     <string name="settings">Pengaturan</string>
     <string name="logout">Keluar</string>
+    <string name="add_new_story">Tambah Story Baru</string>
+    <string name="description">Deskripsi</string>
+    <string name="add_image">Tambah Gambar</string>
+    <string name="post">Unggah</string>
 </resources>

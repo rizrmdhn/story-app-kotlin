@@ -163,7 +163,7 @@ fun DetailScreenContent(
             SubcomposeAsyncImage(
                 model = detailStory.photoUrl,
                 contentDescription = detailStory.name,
-                contentScale = ContentScale.FillWidth,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(

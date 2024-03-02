@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.rizrmdhn.core.data.source.local.LocalDataSource
 import com.rizrmdhn.core.data.source.remote.RemoteDataSource
 import com.rizrmdhn.core.data.source.remote.network.ApiResponse
+import com.rizrmdhn.core.data.source.remote.response.AddNewStoryResponse
 import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
 import com.rizrmdhn.core.data.source.remote.response.LoginResponse
 import com.rizrmdhn.core.data.source.remote.response.RegisterResponse
@@ -15,8 +16,12 @@ import com.rizrmdhn.core.utils.DataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 class StoryRepository(
     private val remoteDataSource: RemoteDataSource,
@@ -118,6 +123,49 @@ class StoryRepository(
                     is ApiResponse.Success -> {
                         val storyDetail = DataMapper.mapStoryDetailToDomain(apiResponse.data)
                         emit(Resource.Success(storyDetail))
+                    }
+
+                    is ApiResponse.Empty -> {
+                        emit(Resource.Error("Empty Data"))
+                    }
+
+                    is ApiResponse.Error -> {
+                        emit(Resource.Error(apiResponse.errorMessage))
+                    }
+                }
+            }
+        }
+    }
+
+    override fun addNewStory(
+        file: File,
+        description: String,
+        lat: Double?,
+        long: Double?,
+        token: String
+    ): Flow<Resource<AddNewStoryResponse>> {
+        return flow {
+            emit(Resource.Loading())
+            val requestDescription = description.toRequestBody("text/plain".toMediaType())
+            val requestLat = lat?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val requestLong = long?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull())
+            val requestImageFile = file.asRequestBody("image/*".toMediaType())
+            val multipartBody = MultipartBody.Part.createFormData(
+                "photo",
+                file.name,
+                requestImageFile
+            )
+            remoteDataSource.addNewStories(
+                multipartBody,
+                requestDescription,
+                requestLat,
+                requestLong,
+                token
+            ).collect { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Success -> {
+                        val result = apiResponse.data
+                        emit(Resource.Success(result))
                     }
 
                     is ApiResponse.Empty -> {

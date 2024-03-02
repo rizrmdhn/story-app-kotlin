@@ -27,6 +27,7 @@ import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.navigation.Screen
 import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
+import com.rizrmdhn.storyapp.ui.screen.add.AddScreen
 import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
@@ -144,6 +145,13 @@ fun StoryApp(
                                 )
                             }
                             composable(
+                                Screen.AddStory.route
+                            ) {
+                                 AddScreen(
+                                     navController = navController,
+                                 )
+                            }
+                            composable(
                                 Screen.About.route
                             ) {
                                 AboutScreen(
@@ -174,11 +182,11 @@ fun StoryApp(
                             }
                             composable(
                                 route = Screen.DetailStory.route,
-                                arguments = listOf(navArgument(Constants.id) {
+                                arguments = listOf(navArgument(Constants.ID) {
                                     type = NavType.StringType
                                 })
                             ) {
-                                val id = it.arguments?.getString(Constants.id) ?: ""
+                                val id = it.arguments?.getString(Constants.ID) ?: ""
                                 DetailScreen(
                                     storyId = id,
                                     navController = navController

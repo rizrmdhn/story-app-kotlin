@@ -1,16 +1,23 @@
 package com.rizrmdhn.storyapp.ui.screen.home
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -42,8 +50,9 @@ fun HomeScreen(
 ) {
     val moreItems by viewModel.loadMore.collectAsState()
     val isFetchingMore by viewModel.isFetchingMore.collectAsState()
+    val listState = rememberLazyListState()
 
-    viewModel.state.collectAsState().value.let { state ->
+    viewModel.state.collectAsState(initial = Resource.Loading()).value.let { state ->
         when (state) {
             is Resource.Loading -> {
                 viewModel.getStories()
@@ -94,6 +103,10 @@ fun HomeScreen(
                                 Screen.DetailStory.createRoute(id)
                             )
                         },
+                        navigateToAdd = {
+                            navController.navigate(Screen.AddStory.route)
+                        },
+                        listState = listState
                     )
                 }
             }
@@ -118,12 +131,13 @@ fun HomeContent(
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToDetail: (String) -> Unit,
+    navigateToAdd: () -> Unit,
     loadMore: () -> Unit,
     moreItems: Boolean,
     setMoreItem: (Boolean) -> Unit,
     fetchingMore: Boolean,
+    listState: LazyListState
 ) {
-    val listState = rememberLazyListState()
 
     Scaffold(
         topBar = {
@@ -131,8 +145,25 @@ fun HomeContent(
                 navigateToAbout = navigateToAbout,
                 navigateToSettings = navigateToSettings
             )
+        },
+        floatingActionButton = {
+            IconButton(
+                onClick = {
+                    navigateToAdd()
+                },
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .background(
+                        MaterialTheme.colorScheme.onBackground
+                    )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Story",
+                    tint = MaterialTheme.colorScheme.background
+                )
+            }
         }
-
     ) { innerPadding ->
         if (story.isEmpty()) {
             Column(
