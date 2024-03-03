@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.rizrmdhn.core.common.Helpers
+import com.rizrmdhn.core.common.Helpers.reduceFileImage
 import com.rizrmdhn.core.domain.usecase.StoryUseCase
 import com.rizrmdhn.storyapp.ui.navigation.Screen
 import kotlinx.coroutines.delay
@@ -50,7 +51,7 @@ class AddScreenViewModel(
 
     fun uploadStory(context: Context, navController: NavHostController) {
         viewModelScope.launch {
-            val fileData = Helpers.uriToFile(uri.value, context)
+            val fileData = Helpers.uriToFile(uri.value, context).reduceFileImage()
 
             if (description.value.isEmpty()) {
                 Toast.makeText(context, "Description cannot be empty", Toast.LENGTH_SHORT).show()

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -112,7 +111,7 @@ fun AddScreenContent(
     val uri = Helpers.getImageUri(
         context,
     )
-    Log.d("AddScreenContent", "uri: $uri")
+
     var capturedImageUri by remember {
         mutableStateOf<Uri>(Uri.EMPTY)
     }
