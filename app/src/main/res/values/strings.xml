@@ -9,6 +9,7 @@
     <string name="logout">Logout</string>
     <string name="add_new_story">Add New Story</string>
     <string name="description">Description</string>
-    <string name="add_image">Add Image</string>
+    <string name="add_image">Camera</string>
     <string name="post">Post</string>
+    <string name="add_image_from_gallery">Gallery</string>
 </resources>

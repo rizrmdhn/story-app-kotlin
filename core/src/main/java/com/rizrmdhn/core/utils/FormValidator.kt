@@ -10,6 +10,6 @@ object FormValidator {
     }
 
     fun isPasswordValid(password: String): Boolean {
-        return password.length >= 6 && password.isNotEmpty()
+        return password.length >= 8 && password.isNotEmpty()
     }
 }

@@ -74,7 +74,7 @@ class RegisterScreenViewModel : ViewModel() {
             _passwordMessage.value = ""
         } else {
             _isPasswordValid.value = false
-            _passwordMessage.value = "Password must be at least 6 characters"
+            _passwordMessage.value = "Password must be at least 8 characters"
         }
         _password.value = password
         _initialPassword.value = false

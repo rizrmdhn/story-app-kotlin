@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -109,16 +112,35 @@ fun AddScreenContent(
     val uri = Helpers.getImageUri(
         context,
     )
-
+    Log.d("AddScreenContent", "uri: $uri")
     var capturedImageUri by remember {
         mutableStateOf<Uri>(Uri.EMPTY)
     }
 
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
-            capturedImageUri = uri
-            setImagerUri(uri)
+            if (it) {
+                capturedImageUri = uri
+                setImagerUri(uri)
+            } else {
+                Toast.makeText(context, "No Image Captured", Toast.LENGTH_SHORT).show()
+                capturedImageUri = Uri.EMPTY
+                setImagerUri(Uri.EMPTY)
+            }
         }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) {
+        if (it != null) {
+            capturedImageUri = it
+            setImagerUri(it)
+        } else {
+            Toast.makeText(context, "Image not found", Toast.LENGTH_SHORT).show()
+            setImagerUri(Uri.EMPTY)
+            capturedImageUri = Uri.EMPTY
+        }
+    }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -162,7 +184,11 @@ fun AddScreenContent(
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = if (imageUri != Uri.EMPTY) {
+                Arrangement.Top
+            } else {
+                Arrangement.Center
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -240,30 +266,64 @@ fun AddScreenContent(
                     }
                 }
             } else {
-                TextButton(
-                    onClick = {
-                        val permissionCheckResult =
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-                            cameraLauncher.launch(uri)
-                        } else {
-                            // Request a permission
-                            permissionLauncher.launch(Manifest.permission.CAMERA)
-                        }
-                    },
-                    modifier = Modifier
-                        .clip(
-                            RoundedCornerShape(8.dp)
+                Row {
+                    TextButton(
+                        onClick = {
+                            val permissionCheckResult =
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.READ_MEDIA_IMAGES
+                                )
+                            if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                galleryLauncher.launch("image/*")
+                            } else {
+                                // Request a permission
+                                permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                            }
+                        },
+                        modifier = Modifier
+                            .clip(
+                                RoundedCornerShape(8.dp)
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.add_image_from_gallery),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.background
                         )
-                        .background(
-                            color = MaterialTheme.colorScheme.onSurface
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    TextButton(
+                        onClick = {
+                            val permissionCheckResult =
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.CAMERA
+                                )
+                            if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                cameraLauncher.launch(uri)
+                            } else {
+                                // Request a permission
+                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                            }
+                        },
+                        modifier = Modifier
+                            .clip(
+                                RoundedCornerShape(8.dp)
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.add_image),
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.background
                         )
-                ) {
-                    Text(
-                        text = stringResource(R.string.add_image),
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.background
-                    )
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -300,7 +360,7 @@ fun AddScreenContent(
                         )
                 ) {
                     if (isUploading) {
-                       CircularProgressIndicator()
+                        CircularProgressIndicator()
                     } else {
                         Text(
                             text = stringResource(R.string.post),

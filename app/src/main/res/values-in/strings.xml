@@ -10,6 +10,7 @@
     <string name="logout">Keluar</string>
     <string name="add_new_story">Tambah Story Baru</string>
     <string name="description">Deskripsi</string>
-    <string name="add_image">Tambah Gambar</string>
+    <string name="add_image">Kamera</string>
     <string name="post">Unggah</string>
+    <string name="add_image_from_gallery">Galeri</string>
 </resources>
