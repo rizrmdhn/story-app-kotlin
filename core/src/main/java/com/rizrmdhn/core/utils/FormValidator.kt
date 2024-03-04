@@ -1,6 +1,7 @@
 package com.rizrmdhn.core.utils
 
 object FormValidator {
+
     fun isNameValid(name: String): Boolean {
         return name.isNotEmpty() && name.length >= 3 && name.matches(Regex("^[a-zA-Z ]+\$"))
     }

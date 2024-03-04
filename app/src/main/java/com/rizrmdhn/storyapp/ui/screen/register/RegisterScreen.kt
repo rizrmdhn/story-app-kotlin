@@ -38,52 +38,47 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun RegisterScreen(
-    navController: NavHostController,
+    navigateToLogin: () -> Unit,
     viewModel: RegisterScreenViewModel = koinViewModel(),
+    name: String,
+    onChangeName: (String) -> Unit,
+    nameMessage: String,
+    isNameValid: Boolean,
+    initialName: Boolean,
+    email: String,
+    onChangeEmail: (String) -> Unit,
+    isEmailValid: Boolean,
+    initialEmail: Boolean,
+    emailMessage: String,
+    password: String,
+    onChangePassword: (String) -> Unit,
+    isPasswordValid: Boolean,
+    initialPassword: Boolean,
+    passwordMessage: String,
     onRegister: (String, String, String) -> Unit,
     isLoading: Boolean
 ) {
-    val name by viewModel.name.collectAsState()
-    val isNameValid by viewModel.isNameValid.collectAsState()
-    val nameMessage by viewModel.nameMessage.collectAsState()
-
-    val email by viewModel.email.collectAsState()
-    val isEmailValid by viewModel.isEmailValid.collectAsState()
-    val emailMessage by viewModel.emailMessage.collectAsState()
-
     val showPassword by viewModel.showPassword.collectAsState()
 
-    val password by viewModel.password.collectAsState()
-    val isPasswordValid by viewModel.isPasswordValid.collectAsState()
-    val passwordMessage by viewModel.passwordMessage.collectAsState()
-
-    val initialName by viewModel.initialName.collectAsState()
-    val initialEmail by viewModel.initialEmail.collectAsState()
-    val initialPassword by viewModel.initialPassword.collectAsState()
-
     RegisterContent(
-        navigateToLogin = {
-            navController.navigate(
-                Screen.Login.route
-            )
-        },
+        navigateToLogin = navigateToLogin,
         name = name,
         onChangeName = {
-            viewModel.setName(it)
+            onChangeName(it)
         },
         isNameValid = isNameValid,
         initialName = initialName,
         nameMessage = nameMessage,
         email = email,
         onChangeEmail = {
-            viewModel.setEmail(it)
+            onChangeEmail(it)
         },
         isEmailValid = isEmailValid,
         initialEmail = initialEmail,
         emailMessage = emailMessage,
         password = password,
         onChangePassword = {
-            viewModel.setPassword(it)
+            onChangePassword(it)
         },
         isPasswordValid = isPasswordValid,
         initialPassword = initialPassword,
@@ -93,25 +88,7 @@ fun RegisterScreen(
             viewModel.setShowPassword(!showPassword)
         },
         onRegister = {
-            if (isNameValid && isEmailValid && isPasswordValid) {
-                onRegister(name, email, password)
-            } else if (name.isEmpty() && email.isEmpty() && password.isEmpty()) {
-                viewModel.setNameMessage("Name is required")
-                viewModel.setEmailMessage("Email is required")
-                viewModel.setPasswordMessage("Password is required")
-                viewModel.setInitialName(false)
-                viewModel.setInitialEmail(false)
-                viewModel.setInitialPassword(false)
-            } else if (name.isEmpty()) {
-                viewModel.setNameMessage("Name is required")
-                viewModel.setInitialName(false)
-            } else if (email.isEmpty()) {
-                viewModel.setEmailMessage("Email is required")
-                viewModel.setInitialEmail(false)
-            } else if (password.isEmpty()) {
-                viewModel.setPasswordMessage("Password is required")
-                viewModel.setInitialPassword(false)
-            }
+            onRegister(name, email, password)
         },
         isLoading = isLoading
     )
@@ -252,11 +229,24 @@ fun RegisterContent(
 fun DefaultLoginPreview() {
     StoryAppTheme {
         RegisterScreen(
-            navController = NavHostController(
-                LocalContext.current
-            ),
+            navigateToLogin = {},
             onRegister = { _, _, _ -> },
-            isLoading = false
+            isLoading = false,
+            email = "",
+            isEmailValid = true,
+            emailMessage = "",
+            initialEmail = true,
+            password = "",
+            isPasswordValid = true,
+            passwordMessage = "",
+            initialPassword = true,
+            onChangeEmail = {},
+            onChangePassword = {},
+            name = "",
+            onChangeName = { },
+            nameMessage = "",
+            isNameValid = true,
+            initialName = true
         )
     }
 }
@@ -266,11 +256,24 @@ fun DefaultLoginPreview() {
 fun DefaultDarkLoginPreview() {
     StoryAppTheme {
         RegisterScreen(
-            navController = NavHostController(
-                LocalContext.current
-            ),
+            navigateToLogin = {},
             onRegister = { _, _, _ -> },
-            isLoading = false
+            isLoading = false,
+            email = "",
+            isEmailValid = true,
+            emailMessage = "",
+            initialEmail = true,
+            password = "",
+            isPasswordValid = true,
+            passwordMessage = "",
+            initialPassword = true,
+            onChangeEmail = {},
+            onChangePassword = {},
+            name = "",
+            onChangeName = { },
+            nameMessage = "",
+            isNameValid = true,
+            initialName = true
         )
     }
 }

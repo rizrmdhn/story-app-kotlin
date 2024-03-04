@@ -39,38 +39,33 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     viewModel: LoginScreenViewModel = koinViewModel(),
-    navController: NavHostController,
+    navigateToRegister: () -> Unit,
+    email: String,
+    isEmailValid: Boolean,
+    emailMessage: String,
+    password: String,
+    isPasswordValid: Boolean,
+    passwordMessage: String,
+    initialEmail: Boolean,
+    initialPassword: Boolean,
+    onChangeEmail: (String) -> Unit,
+    onChangePassword: (String) -> Unit,
     onLogin: (String, String) -> Unit,
     isLoading: Boolean
 ) {
-    val email by viewModel.email.collectAsState()
-    val isEmailValid by viewModel.isEmailValid.collectAsState()
-    val emailMessage by viewModel.emailMessage.collectAsState()
-
     val showPassword by viewModel.showPassword.collectAsState()
 
-    val password by viewModel.password.collectAsState()
-    val isPasswordValid by viewModel.isPasswordValid.collectAsState()
-    val passwordMessage by viewModel.passwordMessage.collectAsState()
-
-    val initialEmail by viewModel.initialEmail.collectAsState()
-    val initialPassword by viewModel.initialPassword.collectAsState()
-
     LoginContent(
-        navigateToRegister = {
-            navController.navigate(
-                Screen.Register.route
-            )
-        },
+        navigateToRegister = navigateToRegister,
         email = email,
         onChangeEmail = {
-            viewModel.setEmail(it)
+            onChangeEmail(it)
         },
         isEmailValid = isEmailValid,
         emailMessage = emailMessage,
         password = password,
         onChangePassword = {
-            viewModel.setPassword(it)
+            onChangePassword(it)
         },
         isPasswordValid = isPasswordValid,
         passwordMessage = passwordMessage,
@@ -81,20 +76,7 @@ fun LoginScreen(
             viewModel.setShowPassword(!showPassword)
         },
         onLogin = {
-            if (isEmailValid && isPasswordValid) {
-                onLogin(email, password)
-            } else if (email.isEmpty() && password.isEmpty()) {
-                viewModel.setEmailMessage("Email is required")
-                viewModel.setPasswordMessage("Password is required")
-                viewModel.setInitialEmail(false)
-                viewModel.setInitialPassword(false)
-            } else if (email.isEmpty()) {
-                viewModel.setEmailMessage("Email is required")
-                viewModel.setInitialEmail(false)
-            } else if (password.isEmpty()) {
-                viewModel.setPasswordMessage("Password is required")
-                viewModel.setInitialPassword(false)
-            }
+            onLogin(email, password)
         },
         isLoading = isLoading
     )
@@ -217,12 +199,20 @@ fun LoginContent(
 fun DefaultLoginPreview() {
     StoryAppTheme {
         LoginScreen(
-            navController = NavHostController(
-                LocalContext.current
-            ),
+            navigateToRegister = {},
             onLogin = { _, _ ->
             },
-            isLoading = false
+            isLoading = false,
+            email = "",
+            isEmailValid = true,
+            emailMessage = "",
+            initialEmail = true,
+            password = "",
+            isPasswordValid = true,
+            passwordMessage = "",
+            initialPassword = true,
+            onChangeEmail = {},
+            onChangePassword = {}
         )
     }
 }
@@ -232,12 +222,20 @@ fun DefaultLoginPreview() {
 fun DefaultDarkLoginPreview() {
     StoryAppTheme {
         LoginScreen(
-            navController = NavHostController(
-                LocalContext.current
-            ),
+            navigateToRegister = {},
             onLogin = { _, _ ->
             },
-            isLoading = false
+            isLoading = false,
+            email = "",
+            isEmailValid = true,
+            emailMessage = "",
+            initialEmail = true,
+            password = "",
+            isPasswordValid = true,
+            passwordMessage = "",
+            initialPassword = true,
+            onChangeEmail = {},
+            onChangePassword = {}
         )
     }
 }

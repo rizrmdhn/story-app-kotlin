@@ -49,6 +49,25 @@ fun StoryApp(
     val registerIsLoading by viewModel.registerIsLoading.collectAsState()
     val locale by viewModel.locale.collectAsState()
 
+    // login and register
+    val name by viewModel.name.collectAsState()
+    val isNameValid by viewModel.isNameValid.collectAsState()
+    val nameMessage by viewModel.nameMessage.collectAsState()
+
+
+    val email by viewModel.email.collectAsState()
+    val isEmailValid by viewModel.isEmailValid.collectAsState()
+    val emailMessage by viewModel.emailMessage.collectAsState()
+
+    val password by viewModel.password.collectAsState()
+    val isPasswordValid by viewModel.isPasswordValid.collectAsState()
+    val passwordMessage by viewModel.passwordMessage.collectAsState()
+
+    val initialName by viewModel.initialName.collectAsState()
+    val initialEmail by viewModel.initialEmail.collectAsState()
+    val initialPassword by viewModel.initialPassword.collectAsState()
+
+
     viewModel.getAccessToken()
     viewModel.getDarkMode()
     viewModel.getLocaleSetting(context)
@@ -112,18 +131,42 @@ fun StoryApp(
                                 Screen.Login.route
                             ) {
                                 LoginScreen(
-                                    navController = navController,
+                                    navigateToRegister = {
+                                        viewModel.setEmailToEmpty()
+                                        viewModel.setPasswordToEmpty()
+                                        viewModel.setNameToEmpty()
+                                        navController.navigate(Screen.Register.route)
+                                    },
                                     onLogin = { email, password ->
                                         viewModel.login(email, password, context)
                                     },
-                                    isLoading = loginIsLoading
+                                    isLoading = loginIsLoading,
+                                    initialEmail = initialEmail,
+                                    initialPassword = initialPassword,
+                                    onChangeEmail = { email ->
+                                        viewModel.setEmail(email)
+                                    },
+                                    onChangePassword = { password ->
+                                        viewModel.setPassword(password)
+                                    },
+                                    email = email,
+                                    isEmailValid = isEmailValid,
+                                    emailMessage = emailMessage,
+                                    isPasswordValid = isPasswordValid,
+                                    password = password,
+                                    passwordMessage = passwordMessage,
                                 )
                             }
                             composable(
                                 Screen.Register.route
                             ) {
                                 RegisterScreen(
-                                    navController = navController,
+                                    navigateToLogin = {
+                                        viewModel.setEmailToEmpty()
+                                        viewModel.setPasswordToEmpty()
+                                        viewModel.setNameToEmpty()
+                                        navController.navigate(Screen.Login.route)
+                                    },
                                     onRegister = { name, email, password ->
                                         viewModel.register(
                                             name,
@@ -133,7 +176,28 @@ fun StoryApp(
                                             navController
                                         )
                                     },
-                                    isLoading = registerIsLoading
+                                    isLoading = registerIsLoading,
+                                    initialName = initialName,
+                                    initialEmail = initialEmail,
+                                    initialPassword = initialPassword,
+                                    onChangeName = { name ->
+                                        viewModel.setName(name)
+                                    },
+                                    onChangeEmail = { email ->
+                                        viewModel.setEmail(email)
+                                    },
+                                    onChangePassword = { password ->
+                                        viewModel.setPassword(password)
+                                    },
+                                    name = name,
+                                    isNameValid = isNameValid,
+                                    nameMessage = nameMessage,
+                                    isEmailValid = isEmailValid,
+                                    email = email,
+                                    emailMessage = emailMessage,
+                                    isPasswordValid = isPasswordValid,
+                                    password = password,
+                                    passwordMessage = passwordMessage,
                                 )
                             }
                         } else {
@@ -147,9 +211,9 @@ fun StoryApp(
                             composable(
                                 Screen.AddStory.route
                             ) {
-                                 AddScreen(
-                                     navController = navController,
-                                 )
+                                AddScreen(
+                                    navController = navController,
+                                )
                             }
                             composable(
                                 Screen.About.route
