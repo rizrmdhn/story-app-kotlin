@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -112,18 +114,12 @@ fun AddScreenContent(
         context,
     )
 
-    var capturedImageUri by remember {
-        mutableStateOf<Uri>(Uri.EMPTY)
-    }
-
     val cameraLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {
             if (it) {
-                capturedImageUri = uri
                 setImagerUri(uri)
             } else {
                 Toast.makeText(context, "No Image Captured", Toast.LENGTH_SHORT).show()
-                capturedImageUri = Uri.EMPTY
                 setImagerUri(Uri.EMPTY)
             }
         }
@@ -132,21 +128,30 @@ fun AddScreenContent(
         ActivityResultContracts.GetContent()
     ) {
         if (it != null) {
-            capturedImageUri = it
             setImagerUri(it)
         } else {
             Toast.makeText(context, "Image not found", Toast.LENGTH_SHORT).show()
             setImagerUri(Uri.EMPTY)
-            capturedImageUri = Uri.EMPTY
         }
     }
 
-    val permissionLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.RequestPermission()
+    val permissionCameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
     ) {
         if (it) {
             Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
             cameraLauncher.launch(uri)
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val permissionGalleryLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            galleryLauncher.launch("image/*")
         } else {
             Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
         }
@@ -269,15 +274,26 @@ fun AddScreenContent(
                     TextButton(
                         onClick = {
                             val permissionCheckResult =
-                                ContextCompat.checkSelfPermission(
-                                    context,
-                                    Manifest.permission.READ_MEDIA_IMAGES
-                                )
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.READ_MEDIA_IMAGES
+                                    )
+                                } else {
+                                   ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.READ_EXTERNAL_STORAGE
+                                    )
+                                }
                             if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
                                 galleryLauncher.launch("image/*")
                             } else {
                                 // Request a permission
-                                permissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    permissionGalleryLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                                } else {
+                                    permissionGalleryLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                }
                             }
                         },
                         modifier = Modifier
@@ -306,7 +322,7 @@ fun AddScreenContent(
                                 cameraLauncher.launch(uri)
                             } else {
                                 // Request a permission
-                                permissionLauncher.launch(Manifest.permission.CAMERA)
+                                permissionCameraLauncher.launch(Manifest.permission.CAMERA)
                             }
                         },
                         modifier = Modifier
