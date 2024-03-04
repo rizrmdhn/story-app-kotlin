@@ -68,7 +68,11 @@ class AddScreenViewModel(
                 setUploadStatus(false)
                 navController.navigate(
                     Screen.Home.route
-                )
+                ) {
+                    popUpTo(Screen.Home.route) {
+                        inclusive = true
+                    }
+                }
             }
         }
 
