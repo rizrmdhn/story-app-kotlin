@@ -1,5 +1,6 @@
 package com.rizrmdhn.core.domain.usecase
 
+import androidx.paging.PagingData
 import com.rizrmdhn.core.data.Resource
 import com.rizrmdhn.core.data.source.remote.response.AddNewStoryResponse
 import com.rizrmdhn.core.data.source.remote.response.LoginResponse
@@ -18,7 +19,7 @@ interface StoryUseCase {
         password: String
     ): Flow<Resource<RegisterResponse>>
 
-    fun getStories(page: Int, size: Int, location: Int, token: String): Flow<Resource<List<Story>>>
+    fun getStories(page: Int,  location: Int, token: String): Flow<PagingData<Story>>
 
     fun getStoryDetail(id: String, token: String): Flow<Resource<StoryDetails>>
 

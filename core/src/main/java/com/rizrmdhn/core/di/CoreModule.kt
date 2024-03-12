@@ -81,7 +81,6 @@ val repositoryModule = module {
         StoryRepository(
             get(),
             get(),
-            get()
         )
     }
 }

@@ -1,7 +1,6 @@
 package com.rizrmdhn.storyapp.ui.screen.register
 
 import androidx.lifecycle.ViewModel
-import com.rizrmdhn.core.utils.FormValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class RegisterScreenViewModel : ViewModel() {

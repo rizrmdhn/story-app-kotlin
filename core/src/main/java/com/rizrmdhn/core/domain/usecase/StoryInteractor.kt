@@ -22,10 +22,9 @@ class StoryInteractor(
 
     override fun getStories(
         page: Int,
-        size: Int,
         location: Int,
         token: String
-    ) = storyRepository.getStories(page, size, location, token)
+    ) = storyRepository.getStories(page,  location, token)
 
     override fun getStoryDetail(id: String, token: String) =
         storyRepository.getStoryDetail(id, token)

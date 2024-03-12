@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,12 +27,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.rizrmdhn.core.domain.model.Form
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.components.FormComp
-import com.rizrmdhn.storyapp.ui.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

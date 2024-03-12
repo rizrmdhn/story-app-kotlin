@@ -11,11 +11,15 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import com.rizrmdhn.storyapp.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
+    locationSwitch: () -> Unit,
+    isLocationOn: Boolean,
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit
 ) {
@@ -24,6 +28,18 @@ fun TopBar(
             Text(text = "Story App")
         },
         actions = {
+            IconButton(
+                onClick = {
+                    locationSwitch()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(
+                        if (isLocationOn) R.drawable.baseline_location_on_24 else R.drawable.baseline_location_off_24
+                    ),
+                    contentDescription =  "Location"
+                )
+            }
             IconButton(
                 onClick = {
                     navigateToAbout()

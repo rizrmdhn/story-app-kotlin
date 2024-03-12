@@ -1,21 +1,22 @@
 package com.rizrmdhn.core.data
 
+import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.google.gson.JsonObject
 import com.rizrmdhn.core.data.source.local.LocalDataSource
 import com.rizrmdhn.core.data.source.remote.RemoteDataSource
 import com.rizrmdhn.core.data.source.remote.network.ApiResponse
 import com.rizrmdhn.core.data.source.remote.response.AddNewStoryResponse
-import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
 import com.rizrmdhn.core.data.source.remote.response.LoginResponse
 import com.rizrmdhn.core.data.source.remote.response.RegisterResponse
 import com.rizrmdhn.core.domain.model.Story
 import com.rizrmdhn.core.domain.model.StoryDetails
 import com.rizrmdhn.core.domain.repository.IStoryRepository
-import com.rizrmdhn.core.utils.AppExecutors
 import com.rizrmdhn.core.utils.DataMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -26,7 +27,6 @@ import java.io.File
 class StoryRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
-    private val appExecutors: AppExecutors
 ) : IStoryRepository {
 
     override fun login(email: String, password: String): Flow<Resource<LoginResponse>> {
@@ -91,28 +91,33 @@ class StoryRepository(
 
     override fun getStories(
         page: Int,
-        size: Int,
         location: Int,
         token: String
-    ): Flow<Resource<List<Story>>> {
-        return object : NetworkBoundResource<List<Story>, List<ListStoryItem>>() {
-            override fun shouldFetch(data: List<Story>?): Boolean = true
-
-            override fun loadFromDB(): Flow<List<Story>> {
-                return localDataSource.getAllStories().map {
-                    DataMapper.mapEntitiesToDomain(it)
+    ): Flow<PagingData<Story>> {
+        return flow {
+            try {
+                val pager = Pager(
+                    config = PagingConfig(
+                        pageSize = 5,
+                        prefetchDistance = 5,
+                        initialLoadSize = 5,
+                        enablePlaceholders = false
+                        ),
+                    pagingSourceFactory = {
+                        StoryPagingSource(
+                            remoteDataSource,
+                            location,
+                            token
+                        )
+                    }
+                ).flow
+                pager.collect {
+                    emit(it)
                 }
+            } catch (e: Exception) {
+                Log.e("StoryRepository", "getStories: ${e.message}")
             }
-
-            override suspend fun createCall(): Flow<ApiResponse<List<ListStoryItem>>> {
-                return remoteDataSource.getStories(page, size, location, token)
-            }
-
-            override suspend fun saveCallResult(data: List<ListStoryItem>) {
-                val storyList = DataMapper.mapResponseToEntities(data)
-                localDataSource.insertStories(storyList)
-            }
-        }.asFlow()
+        }
     }
 
     override fun getStoryDetail(id: String, token: String): Flow<Resource<StoryDetails>> {

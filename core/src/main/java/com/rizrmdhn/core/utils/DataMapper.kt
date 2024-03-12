@@ -1,5 +1,7 @@
 package com.rizrmdhn.core.utils
 
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.rizrmdhn.core.data.source.local.entity.StoryEntity
 import com.rizrmdhn.core.data.source.remote.response.DetailStory
 import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
@@ -56,4 +58,18 @@ object DataMapper {
         lon = input.lon,
         photoUrl = input.photoUrl,
     )
+
+    fun mapPagingStoryToDomain(pagingData: PagingData<ListStoryItem>): PagingData<Story> {
+        return pagingData.map {
+            Story(
+                id = it.id,
+                createdAt = it.createdAt,
+                name = it.name,
+                description = it.description,
+                lat = it.lat,
+                lon = it.lon,
+                photoUrl = it.photoUrl,
+            )
+        }
+    }
 }

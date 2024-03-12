@@ -87,43 +87,18 @@ class RemoteDataSource(
         }.flowOn(Dispatchers.IO)
     }
 
-    fun getStories(
+    suspend fun getStories(
         page: Int,
         size: Int,
         location: Int,
         token: String
-    ): Flow<ApiResponse<List<ListStoryItem>>> {
-        return flow {
-            try {
-                val response = apiService.getStories(
-                    page,
-                    size,
-                    location,
-                    token
-                )
-                val dataArray = response.listStory
-                if (dataArray.isNotEmpty()) {
-                    emit(ApiResponse.Success(dataArray))
-                } else {
-                    emit(ApiResponse.Empty)
-                }
-            } catch (e: Exception) {
-                if (e is HttpException) {
-                    val exception: HttpException = e
-                    val response = exception.response()
-                    try {
-                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
-                        emit(ApiResponse.Error(jsonObject.optString("message")))
-                    } catch (e1: JSONException) {
-                        e1.printStackTrace()
-                    } catch (e1: IOException) {
-                        e1.printStackTrace()
-                    }
-                } else {
-                    emit(ApiResponse.Error(e.toString()))
-                }
-            }
-        }.flowOn(Dispatchers.IO)
+    ): List<ListStoryItem> {
+        return apiService.getStories(
+            page,
+            size,
+            location,
+            token
+        ).listStory
     }
 
     fun getStoryDetail(

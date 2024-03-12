@@ -3,9 +3,7 @@ package com.rizrmdhn.storyapp.ui.screen.home
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -14,13 +12,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,14 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import com.rizrmdhn.core.data.Resource
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.rizrmdhn.core.domain.model.Story
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
-import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.components.ErrorScreen
 import com.rizrmdhn.storyapp.ui.components.StoryCard
 import com.rizrmdhn.storyapp.ui.components.StoryCardLoader
@@ -48,18 +43,19 @@ fun HomeScreen(
     navController: NavHostController,
     viewModel: HomeScreenViewModel = koinViewModel(),
 ) {
-    val moreItems by viewModel.loadMore.collectAsState()
-    val isFetchingMore by viewModel.isFetchingMore.collectAsState()
+    val location by viewModel.location.collectAsState()
     val listState = rememberLazyListState()
 
-    viewModel.state.collectAsState(initial = Resource.Loading()).value.let { state ->
-        when (state) {
-            is Resource.Loading -> {
-                viewModel.getStories()
-
+    viewModel.state.collectAsLazyPagingItems().apply {
+        when (loadState.refresh) {
+            is LoadState.Loading -> {
                 Scaffold(
                     topBar = {
                         TopBar(
+                            isLocationOn = location == 1,
+                            locationSwitch = {
+                                viewModel.locationSwitched()
+                            },
                             navigateToAbout = {
                                 navController.navigate(Screen.About.route)
                             },
@@ -80,68 +76,56 @@ fun HomeScreen(
                 }
             }
 
-            is Resource.Success -> {
-                state.data?.let {
-                    HomeContent(
-                        story = viewModel.storyList,
-                        loadMore = {
-                            viewModel.getMoreStories()
-                        },
-                        moreItems = moreItems,
-                        setMoreItem = {
-                            viewModel.setLoadMore(it)
-                        },
-                        fetchingMore = isFetchingMore,
-                        navigateToAbout = {
-                            navController.navigate(Screen.About.route)
-                        },
-                        navigateToSettings = {
-                            navController.navigate(Screen.Settings.route)
-                        },
-                        navigateToDetail = { id ->
-                            navController.navigate(
-                                Screen.DetailStory.createRoute(id)
-                            )
-                        },
-                        navigateToAdd = {
-                            navController.navigate(Screen.AddStory.route)
-                        },
-                        listState = listState
-                    )
-                }
+            is LoadState.Error -> {
+                val e = (loadState.refresh as LoadState.Error).error
+                ErrorScreen(
+                    error = e.localizedMessage ?: "An unexpected error occurred!",
+                    navController = navController
+                )
             }
 
-            is Resource.Error -> {
-                state.message?.let {
-                    ErrorScreen(
-                        error = it,
-                        navController = navController
-                    )
-                }
+            else -> {
+                HomeContent(
+                    navController = navController,
+                    isLocationOn = location == 1,
+                    locationSwitch = {
+                        viewModel.locationSwitched()
+                    },
+                    story = this,
+                    navigateToAbout = { navController.navigate(Screen.About.route) },
+                    navigateToSettings = { navController.navigate(Screen.Settings.route) },
+                    navigateToDetail = { id ->
+                        navController.navigate(Screen.DetailStory.createRoute(id))
+                    },
+                    navigateToAdd = {
+                        navController.navigate(Screen.AddStory.route)
+                    },
+                    listState = listState
+                )
             }
-
         }
     }
 }
 
 @Composable
 fun HomeContent(
-    story: List<Story>,
+    navController: NavHostController,
+    isLocationOn: Boolean,
+    locationSwitch: () -> Unit,
+    story: LazyPagingItems<Story>,
     modifier: Modifier = Modifier,
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToDetail: (String) -> Unit,
     navigateToAdd: () -> Unit,
-    loadMore: () -> Unit,
-    moreItems: Boolean,
-    setMoreItem: (Boolean) -> Unit,
-    fetchingMore: Boolean,
     listState: LazyListState
 ) {
 
     Scaffold(
         topBar = {
             TopBar(
+                isLocationOn = isLocationOn,
+                locationSwitch = locationSwitch,
                 navigateToAbout = navigateToAbout,
                 navigateToSettings = navigateToSettings
             )
@@ -165,73 +149,55 @@ fun HomeContent(
             }
         }
     ) { innerPadding ->
-        if (story.isEmpty()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            state = listState,
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            items(
+                count = story.itemCount,
+                key= story.itemKey { it.id }
             ) {
-                Text(
-                    text = "No story available",
-                    style = MaterialTheme.typography.bodyMedium
+                val item = story[it] ?: return@items
+                StoryCard(
+                    name = item.name,
+                    description = item.description,
+                    photoUrl = item.photoUrl,
+                    createdAt = item.createdAt,
+                    onGetDetailStory = {
+                        navigateToDetail(item.id)
+                    }
                 )
             }
-        } else {
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                state = listState,
-                modifier = modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                items(story, key = { it.id }) { story ->
-                    StoryCard(
-                        name = story.name,
-                        description = story.description,
-                        photoUrl = story.photoUrl,
-                        createdAt = story.createdAt,
-                        onGetDetailStory = {
-                            navigateToDetail(story.id)
-                        }
-                    )
-                }
-                items(story.size) { index ->
-                    if (index == story.size - 1) {
-                        if (moreItems) {
-                            if (fetchingMore) {
-                                StoryCardLoader()
-                            } else {
-                                Button(
-                                    onClick = {
-                                        loadMore()
-                                    },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.onSurface,
-                                        contentColor = MaterialTheme.colorScheme.background
-                                    ),
-                                ) {
-                                    Text(text = stringResource(R.string.load_more))
-                                }
-                            }
-                        } else {
-                            setMoreItem(false)
-                            Text(
-                                text = stringResource(R.string.no_more_items),
-                                color = MaterialTheme.colorScheme.onSurface,
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
+            when (story.loadState.append) {
+                is LoadState.Loading -> {
+                    item {
+                        StoryCardLoader()
                     }
+                }
+
+                is LoadState.Error -> {
+                    val e = (story.loadState.append as LoadState.Error).error
+                    item {
+                        ErrorScreen(
+                            error = e.localizedMessage ?: "An unexpected error occurred!",
+                            navController =navController
+                        )
+                    }
+                }
+
+                is LoadState.NotLoading -> {
+
                 }
             }
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
