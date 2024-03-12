@@ -26,12 +26,14 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,16 +44,15 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.rizrmdhn.core.data.Resource
 import com.rizrmdhn.core.domain.model.StoryDetails
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
+import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.components.DetailScreenLoader
 import com.rizrmdhn.storyapp.ui.components.ErrorScreen
 import com.rizrmdhn.storyapp.ui.components.shimmerBrush
+import com.rizrmdhn.storyapp.ui.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -63,6 +64,8 @@ fun DetailScreen(
     navController: NavHostController,
     viewModel: DetailScreenViewModel = koinViewModel(),
 ) {
+    val location by viewModel.location.collectAsState()
+
     viewModel.state.collectAsState(initial = Resource.Loading()).value.let { state ->
         when (state) {
             is Resource.Loading -> {
@@ -112,7 +115,16 @@ fun DetailScreen(
                         detailStory = it,
                         navigateBack = {
                             navController.popBackStack()
-                        }
+                        },
+                        navigateToMap = {
+                            navController.navigate(
+                                Screen.Map.createRoute(
+                                    it.lat.toString(),
+                                    it.lon.toString()
+                                )
+                            )
+                        },
+                        location = location == 1
                     )
                 }
             }
@@ -134,6 +146,8 @@ fun DetailScreen(
 fun DetailScreenContent(
     detailStory: StoryDetails,
     navigateBack: () -> Unit,
+    navigateToMap: () -> Unit,
+    location: Boolean,
     modifier: Modifier = Modifier
 ) {
     val cameraState = rememberCameraPositionState()
@@ -164,6 +178,23 @@ fun DetailScreenContent(
                             contentDescription = "Back"
                         )
                     }
+                },
+                actions = {
+                    if (location) {
+                        IconButton(
+                            onClick = {
+                                navigateToMap()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    R.drawable.baseline_map_24
+                                ),
+                                contentDescription = "Info"
+                            )
+                        }
+                    }
+
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF393E46),
@@ -280,22 +311,6 @@ fun DetailScreenContent(
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                if (detailStory.lat != null && detailStory.lon != null) {
-                    GoogleMap(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        cameraPositionState = cameraState,
-                    ) {
-                        Marker(
-                            state = MarkerState(
-                                position = LatLng(detailStory.lat!!, detailStory.lon!!)
-                            ),
-                            title = detailStory.name,
-                            snippet = detailStory.description
-                        )
-                    }
-                }
             }
         }
     }

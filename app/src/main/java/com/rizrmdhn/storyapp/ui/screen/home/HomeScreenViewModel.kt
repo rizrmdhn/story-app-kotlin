@@ -37,12 +37,23 @@ class HomeScreenViewModel(
     private fun getStories() {
         viewModelScope.launch {
             getAccessToken()
-            storyUseCase.getStories(
-                page = page.value, location = location.value, token = token.value
-            ).cachedIn(viewModelScope).catch {
-                _state.value = PagingData.empty()
-            }.collect {
-                _state.value = it
+            _state.value = PagingData.empty()
+            if (location.value == 1) {
+                storyUseCase.getStories(
+                    page = page.value, location = 1, token = token.value
+                ).cachedIn(viewModelScope).catch {
+                    _state.value = PagingData.empty()
+                }.collect {
+                    _state.value = it
+                }
+            } else {
+                storyUseCase.getStories(
+                    page = page.value, location = 0, token = token.value
+                ).cachedIn(viewModelScope).catch {
+                    _state.value = PagingData.empty()
+                }.collect {
+                    _state.value = it
+                }
             }
         }
     }

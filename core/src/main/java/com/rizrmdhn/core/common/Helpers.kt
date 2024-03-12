@@ -13,7 +13,6 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import androidx.core.os.LocaleListCompat
-import com.google.android.gms.maps.model.LatLng
 import com.rizrmdhn.core.BuildConfig
 import java.io.ByteArrayOutputStream
 import java.io.File

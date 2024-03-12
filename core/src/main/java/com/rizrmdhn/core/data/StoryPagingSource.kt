@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.rizrmdhn.core.data.source.remote.RemoteDataSource
-import com.rizrmdhn.core.data.source.remote.response.ListStoryItem
 import com.rizrmdhn.core.domain.model.Story
 import com.rizrmdhn.core.utils.DataMapper
 

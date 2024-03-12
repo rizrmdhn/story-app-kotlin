@@ -22,8 +22,10 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
@@ -39,6 +41,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,25 +61,31 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.rizrmdhn.core.common.Helpers
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.components.shimmerBrush
-import com.rizrmdhn.storyapp.ui.screen.addWithLocation.AddScreenWithLocationViewModel
+import com.rizrmdhn.storyapp.ui.navigation.Screen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AddScreen(
+fun AddScreenWithLocation(
     navController: NavHostController,
-    viewModel: AddScreenWithLocationViewModel = koinViewModel(),
+    viewModel: AddScreenViewModel = koinViewModel(),
     context: Context = LocalContext.current
 ) {
     val imageUri by viewModel.uri.collectAsState()
     val description by viewModel.description.collectAsState()
     val isUploading by viewModel.isUploading.collectAsState()
+    val currentLocation by viewModel.currentLocation.collectAsState()
+    val location by viewModel.location.collectAsState()
 
     viewModel.getAccessToken()
-    AddScreenContent(
+    viewModel.getCurrentLocation(context)
+    AddScreenWithLocationContent(
         navigateBack = {
             navController.popBackStack()
         },
@@ -91,13 +101,25 @@ fun AddScreen(
         onAddNewStory = {
             viewModel.uploadStory(context, navController)
         },
+        currentLocation = currentLocation,
+        navigateToMap = {
+            navController.navigate(
+                Screen.Map.createRoute(
+                    currentLocation.latitude.toString(),
+                    currentLocation.longitude.toString()
+                )
+            )
+        },
+        location = location == 1,
         isUploading = isUploading
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreenContent(
+fun AddScreenWithLocationContent(
+    location: Boolean,
+    currentLocation: LatLng,
     imageUri: Uri?,
     setImagerUri: (Uri) -> Unit,
     navigateBack: () -> Unit,
@@ -105,7 +127,8 @@ fun AddScreenContent(
     onChangeDescription: (String) -> Unit,
     onAddNewStory: () -> Unit,
     isUploading: Boolean,
-    context: Context
+    context: Context,
+    navigateToMap: () -> Unit
 ) {
     val uri = Helpers.getImageUri(
         context,
@@ -154,6 +177,17 @@ fun AddScreenContent(
         }
     }
 
+    val cameraState = rememberCameraPositionState()
+
+    LaunchedEffect(key1 = currentLocation) {
+        if (currentLocation != LatLng(0.0, 0.0)) {
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                currentLocation,
+                15f
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -172,6 +206,22 @@ fun AddScreenContent(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Back"
                         )
+                    }
+                },
+                actions = {
+                    if (location) {
+                        IconButton(
+                            onClick = {
+                                navigateToMap()
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    R.drawable.baseline_map_24
+                                ),
+                                contentDescription = "Info"
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -194,6 +244,7 @@ fun AddScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             if (imageUri != Uri.EMPTY) {
                 SubcomposeAsyncImage(
@@ -277,7 +328,7 @@ fun AddScreenContent(
                                         Manifest.permission.READ_MEDIA_IMAGES
                                     )
                                 } else {
-                                   ContextCompat.checkSelfPermission(
+                                    ContextCompat.checkSelfPermission(
                                         context,
                                         Manifest.permission.READ_EXTERNAL_STORAGE
                                     )
@@ -391,7 +442,7 @@ fun AddScreenContent(
 @Composable
 fun AddScreenLightPreview() {
     StoryAppTheme {
-       AddScreen(
+        AddScreenWithLocation(
             navController = NavHostController(
                 LocalContext.current
             )
@@ -403,7 +454,7 @@ fun AddScreenLightPreview() {
 @Composable
 fun AddScreenPreview() {
     StoryAppTheme {
-        AddScreen(
+        AddScreenWithLocation(
             navController = NavHostController(
                 LocalContext.current
             )

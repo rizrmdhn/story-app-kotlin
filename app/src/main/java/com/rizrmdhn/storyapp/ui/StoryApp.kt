@@ -22,17 +22,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.android.gms.maps.model.LatLng
 import com.rizrmdhn.core.common.Constants
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.navigation.Screen
 import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
-import com.rizrmdhn.storyapp.ui.screen.add.AddScreen
-import com.rizrmdhn.storyapp.ui.screen.addWithLocation.AddScreenWithLocation
+import com.rizrmdhn.storyapp.ui.screen.add.AddScreenWithLocation
 import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreen
+import com.rizrmdhn.storyapp.ui.screen.maps.MapScreen
 import com.rizrmdhn.storyapp.ui.screen.register.RegisterScreen
 import com.rizrmdhn.storyapp.ui.screen.settings.SettingScreen
 import org.koin.androidx.compose.koinViewModel
@@ -212,13 +213,6 @@ fun StoryApp(
                             composable(
                                 Screen.AddStory.route
                             ) {
-                                AddScreen(
-                                    navController = navController,
-                                )
-                            }
-                            composable(
-                                Screen.AddStoryWithLocation.route
-                            ) {
                                 AddScreenWithLocation(
                                     navController = navController,
                                 )
@@ -250,6 +244,21 @@ fun StoryApp(
                                     navigateBack = {
                                         navController.popBackStack()
                                     }
+                                )
+                            }
+                            composable(
+                                route = Screen.Map.route,
+                                arguments = listOf(navArgument(Constants.LAT) {
+                                    type = NavType.StringType
+                                }, navArgument(Constants.LNG) {
+                                    type = NavType.StringType
+                                })
+                            ) {
+                                val lat = it.arguments?.getString(Constants.LAT) ?: ""
+                                val lng = it.arguments?.getString(Constants.LNG) ?: ""
+                                MapScreen(
+                                    navController = navController,
+                                    location = LatLng(lat.toDouble(), lng.toDouble())
                                 )
                             }
                             composable(
