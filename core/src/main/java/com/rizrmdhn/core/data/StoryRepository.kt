@@ -99,8 +99,6 @@ class StoryRepository(
                 val pager = Pager(
                     config = PagingConfig(
                         pageSize = 5,
-                        prefetchDistance = 5,
-                        initialLoadSize = 5,
                         enablePlaceholders = false
                         ),
                     pagingSourceFactory = {
