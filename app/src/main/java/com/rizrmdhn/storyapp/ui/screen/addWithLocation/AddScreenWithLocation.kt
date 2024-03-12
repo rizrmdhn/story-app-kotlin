@@ -90,6 +90,7 @@ fun AddScreenWithLocation(
     val currentLocation by viewModel.currentLocation.collectAsState()
 
     viewModel.getAccessToken()
+    viewModel.getCurrentLocation(context)
     AddScreenWithLocationContent(
         navigateBack = {
             navController.popBackStack()
