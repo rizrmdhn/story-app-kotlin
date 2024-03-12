@@ -1,4 +1,4 @@
-package com.rizrmdhn.storyapp.ui.screen.add
+package com.rizrmdhn.storyapp.ui.screen.addWithLocation
 
 import android.Manifest
 import android.content.Context
@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -22,11 +23,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -39,6 +43,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -57,6 +62,15 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.LocationSource
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.rizrmdhn.core.common.Helpers
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import com.rizrmdhn.storyapp.R
@@ -65,7 +79,7 @@ import com.rizrmdhn.storyapp.ui.screen.addWithLocation.AddScreenWithLocationView
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AddScreen(
+fun AddScreenWithLocation(
     navController: NavHostController,
     viewModel: AddScreenWithLocationViewModel = koinViewModel(),
     context: Context = LocalContext.current
@@ -73,9 +87,10 @@ fun AddScreen(
     val imageUri by viewModel.uri.collectAsState()
     val description by viewModel.description.collectAsState()
     val isUploading by viewModel.isUploading.collectAsState()
+    val currentLocation by viewModel.currentLocation.collectAsState()
 
     viewModel.getAccessToken()
-    AddScreenContent(
+    AddScreenWithLocationContent(
         navigateBack = {
             navController.popBackStack()
         },
@@ -91,13 +106,19 @@ fun AddScreen(
         onAddNewStory = {
             viewModel.uploadStory(context, navController)
         },
+        currentLocation = currentLocation,
+        setCurrentLocation = {
+            viewModel.setCurrentLocation(it)
+        },
         isUploading = isUploading
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddScreenContent(
+fun AddScreenWithLocationContent(
+    currentLocation: LatLng,
+    setCurrentLocation: (LatLng) -> Unit,
     imageUri: Uri?,
     setImagerUri: (Uri) -> Unit,
     navigateBack: () -> Unit,
@@ -154,6 +175,17 @@ fun AddScreenContent(
         }
     }
 
+    val cameraState = rememberCameraPositionState()
+
+    LaunchedEffect(key1 = currentLocation) {
+        if (currentLocation != LatLng(0.0, 0.0)) {
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                currentLocation,
+                15f
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -194,6 +226,7 @@ fun AddScreenContent(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             if (imageUri != Uri.EMPTY) {
                 SubcomposeAsyncImage(
@@ -277,7 +310,7 @@ fun AddScreenContent(
                                         Manifest.permission.READ_MEDIA_IMAGES
                                     )
                                 } else {
-                                   ContextCompat.checkSelfPermission(
+                                    ContextCompat.checkSelfPermission(
                                         context,
                                         Manifest.permission.READ_EXTERNAL_STORAGE
                                     )
@@ -354,6 +387,41 @@ fun AddScreenContent(
                 }
             )
             Spacer(modifier = Modifier.height(16.dp))
+            GoogleMap(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(300.dp)
+                    .padding(16.dp),
+                cameraPositionState = cameraState,
+                onMapClick = {
+                    // Do nothing
+                    Log.d("AddScreenWithLocation", "onMapClick: $it")
+                },
+                onMyLocationButtonClick = {
+                    val fusedLocationClient =
+                        LocationServices.getFusedLocationProviderClient(context)
+                    fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                        if (location != null) {
+                            setCurrentLocation(LatLng(location.latitude, location.longitude))
+                        }
+                    }
+                    return@GoogleMap true
+                },
+                properties = MapProperties(
+                    isMyLocationEnabled = true,
+                )
+            ) {
+                if (currentLocation != LatLng(0.0, 0.0)) {
+                    Marker(
+                        state = MarkerState(
+                            position = currentLocation
+                        ),
+                        title = "Current Location",
+                        snippet = "This is your current location"
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             if (imageUri != Uri.EMPTY) {
                 TextButton(
                     onClick = {
@@ -391,7 +459,7 @@ fun AddScreenContent(
 @Composable
 fun AddScreenLightPreview() {
     StoryAppTheme {
-       AddScreen(
+        AddScreenWithLocation(
             navController = NavHostController(
                 LocalContext.current
             )
@@ -403,7 +471,7 @@ fun AddScreenLightPreview() {
 @Composable
 fun AddScreenPreview() {
     StoryAppTheme {
-        AddScreen(
+        AddScreenWithLocation(
             navController = NavHostController(
                 LocalContext.current
             )

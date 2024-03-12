@@ -210,4 +210,12 @@ class StoryRepository(
     override suspend fun setLocaleSetting(locale: String) {
         localDataSource.saveLocaleSetting(locale)
     }
+
+    override fun getLocationSetting(): Flow<Int> {
+        return localDataSource.getLocationSetting()
+    }
+
+    override suspend fun setLocationSetting(location: Int) {
+        localDataSource.saveLocationSetting(location)
+    }
 }

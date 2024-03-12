@@ -13,6 +13,7 @@ import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.FileProvider
 import androidx.core.os.LocaleListCompat
+import com.google.android.gms.maps.model.LatLng
 import com.rizrmdhn.core.BuildConfig
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -93,6 +94,7 @@ object Helpers {
         bitmap?.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
         return file
     }
+
 
      private fun getImageUriForPreQ(context: Context): Uri {
         val filesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

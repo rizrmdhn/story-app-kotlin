@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,12 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.rizrmdhn.core.data.Resource
 import com.rizrmdhn.core.domain.model.StoryDetails
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
@@ -129,6 +136,17 @@ fun DetailScreenContent(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val cameraState = rememberCameraPositionState()
+
+    LaunchedEffect(key1 = detailStory.lat, key2 = detailStory.lon) {
+        if (detailStory.lat != null && detailStory.lon != null) {
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                LatLng(detailStory.lat!!, detailStory.lon!!),
+                15f
+            )
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -261,6 +279,23 @@ fun DetailScreenContent(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                if (detailStory.lat != null && detailStory.lon != null) {
+                    GoogleMap(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        cameraPositionState = cameraState,
+                    ) {
+                        Marker(
+                            state = MarkerState(
+                                position = LatLng(detailStory.lat!!, detailStory.lon!!)
+                            ),
+                            title = detailStory.name,
+                            snippet = detailStory.description
+                        )
+                    }
+                }
             }
         }
     }

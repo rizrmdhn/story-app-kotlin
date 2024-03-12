@@ -56,4 +56,8 @@ class StoryInteractor(
     override fun getLocaleSetting() = storyRepository.getLocaleSetting()
 
     override suspend fun setLocaleSetting(locale: String) = storyRepository.setLocaleSetting(locale)
+
+    override fun getLocationSetting() = storyRepository.getLocationSetting()
+
+    override suspend fun setLocationSetting(location: Int) = storyRepository.setLocationSetting(location)
 }

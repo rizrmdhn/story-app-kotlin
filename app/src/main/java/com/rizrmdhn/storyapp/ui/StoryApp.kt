@@ -28,6 +28,7 @@ import com.rizrmdhn.storyapp.R
 import com.rizrmdhn.storyapp.ui.navigation.Screen
 import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
 import com.rizrmdhn.storyapp.ui.screen.add.AddScreen
+import com.rizrmdhn.storyapp.ui.screen.addWithLocation.AddScreenWithLocation
 import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
@@ -212,6 +213,13 @@ fun StoryApp(
                                 Screen.AddStory.route
                             ) {
                                 AddScreen(
+                                    navController = navController,
+                                )
+                            }
+                            composable(
+                                Screen.AddStoryWithLocation.route
+                            ) {
+                                AddScreenWithLocation(
                                     navController = navController,
                                 )
                             }

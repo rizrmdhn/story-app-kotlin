@@ -6,4 +6,5 @@ object Constants {
     const val LOCALE_KEY = "locale_key"
     const val THEME_KEY = "theme_key"
     const val AUTH_KEY = "auth_key"
+    const val LOCATION_KEY = "location"
 }

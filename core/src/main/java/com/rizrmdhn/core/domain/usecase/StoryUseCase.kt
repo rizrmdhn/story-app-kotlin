@@ -44,4 +44,8 @@ interface StoryUseCase {
     fun getLocaleSetting(): Flow<String>
 
     suspend fun setLocaleSetting(locale: String)
+
+    fun getLocationSetting(): Flow<Int>
+
+    suspend fun setLocationSetting(location: Int)
 }

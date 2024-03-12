@@ -28,6 +28,7 @@ class HomeScreenViewModel(
 
 
     init {
+        getLocationSetting()
         getAccessToken()
         getStories()
     }
@@ -47,12 +48,26 @@ class HomeScreenViewModel(
     }
 
     fun locationSwitched() {
-        if (location.value == 0) {
-            _location.value = 1
-        } else {
-            _location.value = 0
+        viewModelScope.launch {
+            if (location.value == 0) {
+                _location.value = 1
+                storyUseCase.setLocationSetting(1)
+            } else {
+                _location.value = 0
+                storyUseCase.setLocationSetting(0)
+            }
+            getStories()
         }
-        getStories()
+    }
+
+    private fun getLocationSetting() {
+        viewModelScope.launch {
+            storyUseCase.getLocationSetting().catch {
+                _location.value = 0
+            }.collect {
+                _location.value = it
+            }
+        }
     }
 
     private fun getAccessToken() {

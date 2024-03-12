@@ -1,6 +1,14 @@
 package com.rizrmdhn.storyapp.ui.screen.home
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
@@ -42,9 +51,32 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     navController: NavHostController,
     viewModel: HomeScreenViewModel = koinViewModel(),
+    context: Context = LocalContext.current
 ) {
     val location by viewModel.location.collectAsState()
     val listState = rememberLazyListState()
+
+    val permissionLocationLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            navController.navigate(Screen.AddStoryWithLocation.route)
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val permissionLocationSwitcherLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) {
+        if (it) {
+            Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+            viewModel.locationSwitched()
+        } else {
+            Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     viewModel.state.collectAsLazyPagingItems().apply {
         when (loadState.refresh) {
@@ -54,7 +86,30 @@ fun HomeScreen(
                         TopBar(
                             isLocationOn = location == 1,
                             locationSwitch = {
-                                viewModel.locationSwitched()
+                                val permissionCheckResult =
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        ContextCompat.checkSelfPermission(
+                                            context,
+                                            Manifest.permission.ACCESS_FINE_LOCATION
+                                        )
+                                    } else {
+                                        ContextCompat.checkSelfPermission(
+                                            context,
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        )
+                                    }
+
+                                if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                    viewModel.locationSwitched()
+                                } else {
+                                    permissionLocationSwitcherLauncher.launch(
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            Manifest.permission.ACCESS_FINE_LOCATION
+                                        } else {
+                                            Manifest.permission.ACCESS_COARSE_LOCATION
+                                        }
+                                    )
+                                }
                             },
                             navigateToAbout = {
                                 navController.navigate(Screen.About.route)
@@ -89,7 +144,30 @@ fun HomeScreen(
                     navController = navController,
                     isLocationOn = location == 1,
                     locationSwitch = {
-                        viewModel.locationSwitched()
+                        val permissionCheckResult =
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                )
+                            } else {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            }
+
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            viewModel.locationSwitched()
+                        } else {
+                            permissionLocationSwitcherLauncher.launch(
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    Manifest.permission.ACCESS_FINE_LOCATION
+                                } else {
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                }
+                            )
+                        }
                     },
                     story = this,
                     navigateToAbout = { navController.navigate(Screen.About.route) },
@@ -98,7 +176,34 @@ fun HomeScreen(
                         navController.navigate(Screen.DetailStory.createRoute(id))
                     },
                     navigateToAdd = {
-                        navController.navigate(Screen.AddStory.route)
+                        if (location == 1) {
+                            val permissionCheckResult =
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.ACCESS_FINE_LOCATION
+                                    )
+                                } else {
+                                    ContextCompat.checkSelfPermission(
+                                        context,
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                    )
+                                }
+
+                            if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                                navController.navigate(Screen.AddStoryWithLocation.route)
+                            } else {
+                            permissionLocationLauncher.launch(
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        Manifest.permission.ACCESS_FINE_LOCATION
+                                    } else {
+                                        Manifest.permission.ACCESS_COARSE_LOCATION
+                                    }
+                                )
+                            }
+                        } else {
+                            navController.navigate(Screen.AddStory.route)
+                        }
                     },
                     listState = listState
                 )

@@ -38,4 +38,8 @@ class LocalDataSource(
     fun getLocaleSetting() = settingPreferences.getLocaleSetting()
 
     suspend fun saveLocaleSetting(locale: String) = settingPreferences.saveLocaleSetting(locale)
+
+    fun getLocationSetting() = settingPreferences.getLocationSetting()
+
+    suspend fun saveLocationSetting(location: Int) = settingPreferences.saveLocationSetting(location)
 }

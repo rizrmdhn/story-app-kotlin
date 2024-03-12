@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.rizrmdhn.core.common.Constants
@@ -19,6 +20,7 @@ class SettingPreferences(
     private val themeKey = booleanPreferencesKey(Constants.THEME_KEY)
     private val authKey = stringPreferencesKey(Constants.AUTH_KEY)
     private val localeKey = stringPreferencesKey(Constants.LOCALE_KEY)
+    private val locationKey = intPreferencesKey(Constants.LOCATION_KEY)
 
     fun getThemeSetting(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
@@ -59,6 +61,18 @@ class SettingPreferences(
     suspend fun saveLocaleSetting(locale: String) {
         dataStore.edit { preferences ->
             preferences[localeKey] = locale
+        }
+    }
+
+    fun getLocationSetting(): Flow<Int> {
+        return dataStore.data.map { preferences ->
+            preferences[locationKey] ?: 0
+        }
+    }
+
+    suspend fun saveLocationSetting(location: Int) {
+        dataStore.edit { preferences ->
+            preferences[locationKey] = location
         }
     }
 }
