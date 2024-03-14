@@ -22,6 +22,6 @@ val viewModelModule = module {
     viewModel { HomeScreenViewModel(get()) }
     viewModel { DetailScreenViewModel(get()) }
     viewModel { AddScreenViewModel(get()) }
-    viewModel { MapScreenViewModel(get())}
+    viewModel { MapScreenViewModel() }
     viewModel { StoryAppViewModel(get()) }
 }

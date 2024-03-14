@@ -1,29 +1,27 @@
 package com.rizrmdhn.core.data.source.local
 
+import com.rizrmdhn.core.data.source.local.entity.RemoteKeys
 import com.rizrmdhn.core.data.source.local.entity.StoryEntity
 import com.rizrmdhn.core.data.source.local.preferences.SettingPreferences
+import com.rizrmdhn.core.data.source.local.room.RemoteKeysDao
 import com.rizrmdhn.core.data.source.local.room.StoryDao
 
 class LocalDataSource(
     private val storyDao: StoryDao,
+    private val remoteKeysDao: RemoteKeysDao,
     private val settingPreferences: SettingPreferences,
 ) {
     fun getAllStories() = storyDao.getAllStories()
 
-    fun getFavoriteStories() = storyDao.getFavoriteStories()
-
     suspend fun insertStories(storyList: List<StoryEntity>) = storyDao.insertStories(storyList)
 
-    fun setFavoriteStory(story: StoryEntity, newState: Boolean) {
-        story.isFavorite = newState
-        storyDao.updateFavoriteStory(story)
-    }
+    suspend fun deleteAllStories() = storyDao.deleteAllStories()
 
-    fun isFavoriteStory(id: String) = storyDao.isFavoriteStory(id)
+    suspend fun getRemoteKeysId(id: String) = remoteKeysDao.getRemoteKeysId(id)
 
-    fun searchStory(query: String) = storyDao.searchStory(query)
+    suspend fun insertAll(remoteKey: List<RemoteKeys>) = remoteKeysDao.insertAll(remoteKey)
 
-    fun searchFavoriteStory(query: String) = storyDao.searchFavoriteStory(query)
+    suspend fun deleteRemoteKeys() = remoteKeysDao.deleteRemoteKeys()
 
     fun getThemeSetting() = settingPreferences.getThemeSetting()
 

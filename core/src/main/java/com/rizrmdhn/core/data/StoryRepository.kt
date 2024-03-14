@@ -1,6 +1,7 @@
 package com.rizrmdhn.core.data
 
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -89,6 +90,7 @@ class StoryRepository(
     }
 
 
+    @OptIn(ExperimentalPagingApi::class)
     override fun getStories(
         page: Int,
         location: Int,
@@ -101,12 +103,14 @@ class StoryRepository(
                         pageSize = 5,
                         enablePlaceholders = false
                         ),
+                    remoteMediator = StoryPagingSource(
+                        localDataSource,
+                        remoteDataSource,
+                        location,
+                        token
+                    ),
                     pagingSourceFactory = {
-                        StoryPagingSource(
-                            remoteDataSource,
-                            location,
-                            token
-                        )
+                        localDataSource.getAllStories()
                     }
                 ).flow
                 pager.collect {

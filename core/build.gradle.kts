@@ -30,6 +30,11 @@ android {
         }
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+        freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false

@@ -26,29 +26,6 @@ object DataMapper {
         return storyList
     }
 
-    fun mapEntitiesToDomain(input: List<StoryEntity>): List<Story> =
-        input.map {
-            Story(
-                id = it.id,
-                createdAt = it.createdAt,
-                name = it.name,
-                description = it.description,
-                lat = it.lat,
-                lon = it.lon,
-                photoUrl = it.photoUrl,
-            )
-        }
-
-    fun mapDomainToEntity(input: Story) = StoryEntity(
-        id = input.id,
-        createdAt = input.createdAt,
-        name = input.name,
-        description = input.description,
-        lat = input.lat,
-        lon = input.lon,
-        photoUrl = input.photoUrl,
-    )
-
     fun mapStoryDetailToDomain(input: DetailStory) = StoryDetails(
         id = input.id,
         createdAt = input.createdAt,
@@ -59,17 +36,4 @@ object DataMapper {
         photoUrl = input.photoUrl,
     )
 
-    fun mapPagingStoryToDomain(pagingData: PagingData<ListStoryItem>): PagingData<Story> {
-        return pagingData.map {
-            Story(
-                id = it.id,
-                createdAt = it.createdAt,
-                name = it.name,
-                description = it.description,
-                lat = it.lat,
-                lon = it.lon,
-                photoUrl = it.photoUrl,
-            )
-        }
-    }
 }

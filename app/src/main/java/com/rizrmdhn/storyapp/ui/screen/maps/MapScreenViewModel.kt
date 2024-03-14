@@ -9,15 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.rizrmdhn.core.domain.usecase.StoryUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class MapScreenViewModel(
-    private val storyUseCase: StoryUseCase,
-) : ViewModel() {
+class MapScreenViewModel : ViewModel() {
     private val _currentLocation: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
     val currentLocation: StateFlow<LatLng> get() = _currentLocation
 

@@ -9,7 +9,6 @@ sealed class Screen(val route: String) {
         fun createRoute(lat: String, lng: String, isLocationEnabled: Boolean,) = "map/$lat/$lng/$isLocationEnabled"
     }
     data object Loading : Screen("loading")
-    data object Favorite : Screen("favorite")
     data object About : Screen("about")
     data object Settings : Screen("settings")
     data object DetailStory : Screen("home/{id}") {

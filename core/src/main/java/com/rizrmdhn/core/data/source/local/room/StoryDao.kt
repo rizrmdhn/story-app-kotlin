@@ -1,16 +1,19 @@
 package com.rizrmdhn.core.data.source.local.room
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.rizrmdhn.core.data.source.local.entity.StoryEntity
+import com.rizrmdhn.core.domain.model.Story
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StoryDao {
     @Query("SELECT * FROM story")
-    fun getAllStories(): Flow<List<StoryEntity>>
+    fun getAllStories(): PagingSource<Int, Story>
 
     @Query("SELECT * FROM story where isFavorite = 1")
     fun getFavoriteStories(): Flow<List<StoryEntity>>
@@ -18,8 +21,11 @@ interface StoryDao {
     @Query("SELECT * FROM story WHERE name LIKE '%' || :query || '%'")
     fun searchStory(query: String): Flow<List<StoryEntity>>
 
-    @Insert(onConflict = androidx.room.OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertStories(stories: List<StoryEntity>)
+
+    @Query("DELETE FROM story")
+    suspend fun deleteAllStories()
 
     @Update
     fun updateFavoriteStory(story: StoryEntity)
