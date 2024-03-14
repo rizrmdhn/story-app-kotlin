@@ -120,7 +120,8 @@ fun DetailScreen(
                             navController.navigate(
                                 Screen.Map.createRoute(
                                     it.lat.toString(),
-                                    it.lon.toString()
+                                    it.lon.toString(),
+                                    location == 1
                                 )
                             )
                         },

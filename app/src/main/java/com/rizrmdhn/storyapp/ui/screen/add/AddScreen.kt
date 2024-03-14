@@ -106,7 +106,8 @@ fun AddScreenWithLocation(
             navController.navigate(
                 Screen.Map.createRoute(
                     currentLocation.latitude.toString(),
-                    currentLocation.longitude.toString()
+                    currentLocation.longitude.toString(),
+                    location == 1
                 )
             )
         },

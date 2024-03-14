@@ -21,11 +21,14 @@ class MapScreenViewModel(
     private val _currentLocation: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
     val currentLocation: StateFlow<LatLng> get() = _currentLocation
 
+    private val _myLocation: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
+    val myLocation: StateFlow<LatLng> get() = _myLocation
+
     fun setCurrentLocation(latLng: LatLng) {
         _currentLocation.value = latLng
     }
 
-    fun getCurrentLocation(context: Context) {
+    fun getMyLocation(context: Context) {
         viewModelScope.launch {
             val fusedLocationClient =
                 LocationServices.getFusedLocationProviderClient(context)
@@ -42,9 +45,13 @@ class MapScreenViewModel(
             }
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
-                    setCurrentLocation(LatLng(location.latitude, location.longitude))
+                    setMyLocation(LatLng(location.latitude, location.longitude))
                 }
             }
         }
+    }
+
+    private fun setMyLocation(latLng: LatLng) {
+        _myLocation.value = latLng
     }
 }

@@ -252,13 +252,18 @@ fun StoryApp(
                                     type = NavType.StringType
                                 }, navArgument(Constants.LNG) {
                                     type = NavType.StringType
-                                })
+                                },
+                                    navArgument(Constants.IS_LOCATION_ENABLED) {
+                                        type = NavType.StringType
+                                    })
                             ) {
                                 val lat = it.arguments?.getString(Constants.LAT) ?: ""
                                 val lng = it.arguments?.getString(Constants.LNG) ?: ""
+                                val isLocationEnabled =
+                                    it.arguments?.getString(Constants.IS_LOCATION_ENABLED) ?: ""
                                 MapScreen(
-                                    navController = navController,
-                                    location = LatLng(lat.toDouble(), lng.toDouble())
+                                    location = LatLng(lat.toDouble(), lng.toDouble()),
+                                    isLocationEnabled = isLocationEnabled.toBoolean(),
                                 )
                             }
                             composable(

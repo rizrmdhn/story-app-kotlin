@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,45 +27,76 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.ktx.model.cameraPosition
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapScreen(
-    navController: NavController,
     viewModel: MapScreenViewModel = koinViewModel(),
     context: Context = LocalContext.current,
     location: LatLng,
+    isLocationEnabled: Boolean,
 ) {
     val currentLocation by viewModel.currentLocation.collectAsState()
+    val myLocation by viewModel.myLocation.collectAsState()
 
-    if (location != LatLng(0.0, 0.0)) {
-        viewModel.setCurrentLocation(location)
-    } else {
-        viewModel.getCurrentLocation(context)
+    if (isLocationEnabled) {
+        viewModel.getMyLocation(context)
     }
 
+
     MapScreenContent(
+        isLocationEnabled = isLocationEnabled,
         location = location,
         context = context,
         currentLocation = currentLocation,
+        myLocation = myLocation,
         setCurrentLocation = viewModel::setCurrentLocation,
     )
 }
 
 @Composable
 fun MapScreenContent(
+    isLocationEnabled: Boolean,
     location: LatLng,
     context: Context,
     currentLocation: LatLng,
+    myLocation: LatLng,
     setCurrentLocation: (LatLng) -> Unit,
 ) {
     val cameraState = rememberCameraPositionState()
+
+    if (location != LatLng(0.0, 0.0)) {
+        cameraState.position = CameraPosition.fromLatLngZoom(
+            location,
+            15f
+        )
+    }
+
+    LaunchedEffect(key1 = location) {
+        if (location != LatLng(0.0, 0.0)) {
+            setCurrentLocation(location)
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                location,
+                15f
+            )
+        }
+    }
 
     LaunchedEffect(key1 = currentLocation) {
         if (currentLocation != LatLng(0.0, 0.0)) {
             cameraState.position = CameraPosition.fromLatLngZoom(
                 currentLocation,
+                15f
+            )
+        }
+    }
+
+    LaunchedEffect(key1 = myLocation) {
+        if (myLocation != LatLng(0.0, 0.0)) {
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                myLocation,
                 15f
             )
         }
@@ -77,29 +109,44 @@ fun MapScreenContent(
             .height(300.dp),
         cameraPositionState = cameraState,
         onMyLocationButtonClick = {
-            val fusedLocationClient =
-                LocationServices.getFusedLocationProviderClient(context)
-            if (ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                Toast.makeText(context, "Please enable location permission", Toast.LENGTH_SHORT)
-                    .show()
+            if (location != LatLng(0.0, 0.0)) {
+                cameraState.position = CameraPosition.fromLatLngZoom(
+                    location,
+                    15f
+                )
+                return@GoogleMap true
+            } else {
+                val fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(context)
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    Toast.makeText(context, "Please enable location permission", Toast.LENGTH_SHORT)
+                        .show()
+                    return@GoogleMap true
+                }
+                fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        setCurrentLocation(LatLng(location.latitude, location.longitude))
+                    }
+                }
                 return@GoogleMap true
             }
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    setCurrentLocation(LatLng(location.latitude, location.longitude))
-                }
-            }
-            return@GoogleMap true
+        },
+        onMapLongClick = {
+            setCurrentLocation(it)
+            cameraState.position = CameraPosition.fromLatLngZoom(
+                it,
+                15f
+            )
         },
         properties = MapProperties(
-            isMyLocationEnabled = location != currentLocation,
+            isMyLocationEnabled = isLocationEnabled,
         )
     ) {
         if (currentLocation != LatLng(0.0, 0.0)) {
@@ -119,8 +166,8 @@ fun MapScreenContent(
 fun DefaultMapScreenPreview() {
     StoryAppTheme {
         MapScreen(
-            navController = NavController(LocalContext.current),
-            location = LatLng(0.0, 0.0)
+            location = LatLng(0.0, 0.0),
+            isLocationEnabled = true
         )
     }
 }
@@ -130,8 +177,8 @@ fun DefaultMapScreenPreview() {
 fun DarkMapScreenPreview() {
     StoryAppTheme(darkTheme = true) {
         MapScreen(
-            navController = NavController(LocalContext.current),
-            location = LatLng(0.0, 0.0)
+            location = LatLng(0.0, 0.0),
+            isLocationEnabled = true
         )
     }
 }
