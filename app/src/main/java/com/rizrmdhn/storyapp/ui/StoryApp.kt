@@ -70,8 +70,6 @@ fun StoryApp(
     val initialPassword by viewModel.initialPassword.collectAsState()
 
 
-    viewModel.getAccessToken()
-    viewModel.getDarkMode()
     viewModel.getLocaleSetting(context)
     StoryAppTheme(
         darkTheme = darkMode

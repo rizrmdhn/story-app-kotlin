@@ -38,7 +38,7 @@ class DetailScreenViewModel(
         }
     }
 
-    private fun getLocationSetting() {
+     fun getLocationSetting() {
         viewModelScope.launch {
             storyUseCase.getLocationSetting().catch {
                 _location.value = 0

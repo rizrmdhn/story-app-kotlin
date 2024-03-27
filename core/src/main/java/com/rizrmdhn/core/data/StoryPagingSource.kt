@@ -26,30 +26,6 @@ class StoryPagingSource(
         return InitializeAction.LAUNCH_INITIAL_REFRESH
     }
 
-//    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Story> {
-//        return try {
-//            val page = params.key ?: INITIAL_PAGE
-//            Log.d("StoryPagingSource", "load: ${params.loadSize}")
-//            val response = remoteDataSource.getStories(page, params.loadSize, location, token)
-//            val mappedDataToEntities = DataMapper.mapResponseToEntities(response)
-//            val mappedDataToModel = DataMapper.mapEntitiesToDomain(mappedDataToEntities)
-//            LoadResult.Page(
-//                data = mappedDataToModel,
-//                prevKey = if (page == INITIAL_PAGE) null else page - 1,
-//                nextKey = if (response.isEmpty()) null else page + 1
-//            )
-//        } catch (e: Exception) {
-//            LoadResult.Error(e)
-//        }
-//    }
-//
-//    override fun getRefreshKey(state: PagingState<Int, Story>): Int? {
-//        return state.anchorPosition?.let { anchorPosition ->
-//            val anchorPage = state.closestPageToPosition(anchorPosition)
-//            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
-//        }
-//    }
-
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Story>): MediatorResult {
         val page = when (loadType) {
             LoadType.REFRESH -> {

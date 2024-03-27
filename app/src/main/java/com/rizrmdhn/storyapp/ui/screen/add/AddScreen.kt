@@ -259,8 +259,7 @@ fun AddScreenWithLocationContent(
                             max = 200.dp
                         )
                 ) {
-                    val state = painter.state
-                    when (state) {
+                    when (painter.state) {
                         is AsyncImagePainter.State.Loading -> {
                             Box(
                                 modifier = Modifier

@@ -13,4 +13,12 @@
     <string name="add_image">Kamera</string>
     <string name="post">Unggah</string>
     <string name="add_image_from_gallery">Galeri</string>
+    <string name="email">Email</string>
+    <string name="enter_your_email">Masukkan Email Anda</string>
+    <string name="password">Password</string>
+    <string name="enter_your_password">Masukkan Password Anda</string>
+    <string name="login">Masuk</string>
+    <string name="don_t_have_an_account">Belum Punya Akun ?</string>
+    <string name="register">Register</string>
+    <string name="error_icon">Error icon</string>
 </resources>

@@ -20,16 +20,18 @@ import androidx.compose.ui.unit.dp
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 
 @Composable
-fun DetailScreenLoader() {
+fun DetailScreenLoader(
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(
                 color = MaterialTheme.colorScheme.background
             )
     ) {
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .heightIn(
                     min = 150.dp,
@@ -42,9 +44,9 @@ fun DetailScreenLoader() {
                     )
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = modifier.height(16.dp))
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .width(100.dp)
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
@@ -55,9 +57,9 @@ fun DetailScreenLoader() {
                     )
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = modifier.height(16.dp))
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
@@ -68,9 +70,9 @@ fun DetailScreenLoader() {
                     )
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = modifier.height(16.dp))
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
@@ -81,9 +83,9 @@ fun DetailScreenLoader() {
                     )
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = modifier.height(16.dp))
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))
@@ -94,9 +96,9 @@ fun DetailScreenLoader() {
                     )
                 )
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = modifier.height(16.dp))
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .width(100.dp)
                 .height(24.dp)
                 .clip(RoundedCornerShape(4.dp))

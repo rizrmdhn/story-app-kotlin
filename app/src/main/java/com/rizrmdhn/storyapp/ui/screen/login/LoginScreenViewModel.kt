@@ -10,5 +10,4 @@ class LoginScreenViewModel : ViewModel() {
     fun setShowPassword(boolean: Boolean) {
         _showPassword.value = boolean
     }
-
 }

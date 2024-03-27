@@ -36,4 +36,13 @@ object DataMapper {
         photoUrl = input.photoUrl,
     )
 
+    fun mapStoryToStoryDetails(input: Story) = StoryDetails(
+        id = input.id,
+        createdAt = input.createdAt,
+        name = input.name,
+        description = input.description,
+        lat = input.lat,
+        lon = input.lon,
+        photoUrl = input.photoUrl,
+    )
 }

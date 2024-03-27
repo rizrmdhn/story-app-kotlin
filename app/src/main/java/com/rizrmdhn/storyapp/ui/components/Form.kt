@@ -22,11 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.rizrmdhn.core.domain.model.Form
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
+import com.rizrmdhn.storyapp.R
 
 @Composable
 fun FormComp(
@@ -73,7 +75,7 @@ fun FormComp(
                     if (data.isError) {
                         Icon(
                             imageVector = Icons.Filled.Info,
-                            contentDescription = "Error icon",
+                            contentDescription = stringResource(R.string.error_icon),
                             tint = MaterialTheme.colorScheme.error
                         )
                     }

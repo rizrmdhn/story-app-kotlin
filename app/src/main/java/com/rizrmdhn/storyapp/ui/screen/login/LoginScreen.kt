@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -109,8 +110,8 @@ fun LoginContent(
     ) {
         val formList = listOf(
             Form(
-                title = "Email",
-                placeholder = "Enter your email",
+                title = stringResource(R.string.email),
+                placeholder = stringResource(R.string.enter_your_email),
                 value = email,
                 onValueChange = {
                     onChangeEmail(it)
@@ -121,8 +122,8 @@ fun LoginContent(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
             ),
             Form(
-                title = "Password",
-                placeholder = "Enter your password",
+                title = stringResource(R.string.password),
+                placeholder = stringResource(R.string.enter_your_password),
                 value = password,
                 onValueChange = {
                     onChangePassword(it)
@@ -159,7 +160,7 @@ fun LoginContent(
         )
         FormComp(
             formData = formList,
-            buttonText = "Login",
+            buttonText = stringResource(R.string.login),
             onClickButton = {
                 if (!isLoading) {
                     onLogin()
@@ -172,7 +173,7 @@ fun LoginContent(
         )
         Row {
             Text(
-                text = "Don't have an account?",
+                text = stringResource(R.string.don_t_have_an_account),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -180,7 +181,7 @@ fun LoginContent(
                 modifier = Modifier.width(4.dp)
             )
             Text(
-                text = "Register",
+                text = stringResource(R.string.register),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.clickable {

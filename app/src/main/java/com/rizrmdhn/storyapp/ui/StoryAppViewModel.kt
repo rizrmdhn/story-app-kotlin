@@ -72,6 +72,11 @@ class StoryAppViewModel(
     private val _initialPassword: MutableStateFlow<Boolean> = MutableStateFlow(true)
     val initialPassword: MutableStateFlow<Boolean> get() = _initialPassword
 
+    init {
+        getAccessToken()
+        getDarkMode()
+    }
+
     fun getLocaleSetting(context: Context) {
         viewModelScope.launch {
             storyUseCase.getLocaleSetting().collect {

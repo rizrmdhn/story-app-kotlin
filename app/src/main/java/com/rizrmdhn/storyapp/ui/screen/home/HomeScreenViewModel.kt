@@ -34,24 +34,24 @@ class HomeScreenViewModel(
     }
 
 
-    private fun getStories() {
+    fun getStories() {
         viewModelScope.launch {
             getAccessToken()
             _state.value = PagingData.empty()
             if (location.value == 1) {
                 storyUseCase.getStories(
                     page = page.value, location = 1, token = token.value
-                ).cachedIn(viewModelScope).catch {
+                ).catch {
                     _state.value = PagingData.empty()
-                }.collect {
+                }.cachedIn(viewModelScope).collect {
                     _state.value = it
                 }
             } else {
                 storyUseCase.getStories(
                     page = page.value, location = 0, token = token.value
-                ).cachedIn(viewModelScope).catch {
+                ).catch {
                     _state.value = PagingData.empty()
-                }.collect {
+                }.cachedIn(viewModelScope).collect {
                     _state.value = it
                 }
             }
@@ -71,7 +71,7 @@ class HomeScreenViewModel(
         }
     }
 
-    private fun getLocationSetting() {
+    fun getLocationSetting() {
         viewModelScope.launch {
             storyUseCase.getLocationSetting().catch {
                 _location.value = 0
@@ -81,7 +81,7 @@ class HomeScreenViewModel(
         }
     }
 
-    private fun getAccessToken() {
+    fun getAccessToken() {
         viewModelScope.launch {
             storyUseCase.getAccessToken().catch {
                 _token.value = it.message.toString()

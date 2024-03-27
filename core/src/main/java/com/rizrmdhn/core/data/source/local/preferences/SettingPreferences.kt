@@ -17,10 +17,17 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = Con
 class SettingPreferences(
     private val dataStore: DataStore<Preferences>
 ) {
-    private val themeKey = booleanPreferencesKey(Constants.THEME_KEY)
-    private val authKey = stringPreferencesKey(Constants.AUTH_KEY)
-    private val localeKey = stringPreferencesKey(Constants.LOCALE_KEY)
-    private val locationKey = intPreferencesKey(Constants.LOCATION_KEY)
+    companion object {
+        const val LOCALE_KEY = "locale_key"
+        const val THEME_KEY = "theme_key"
+        const val AUTH_KEY = "auth_key"
+        const val LOCATION_KEY = "location"
+    }
+
+    private val themeKey = booleanPreferencesKey(THEME_KEY)
+    private val authKey = stringPreferencesKey(AUTH_KEY)
+    private val localeKey = stringPreferencesKey(LOCALE_KEY)
+    private val locationKey = intPreferencesKey(LOCATION_KEY)
 
     fun getThemeSetting(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
