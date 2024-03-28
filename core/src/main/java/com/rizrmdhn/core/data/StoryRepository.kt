@@ -95,7 +95,6 @@ class StoryRepository(
     override fun getStories(
         page: Int,
         location: Int,
-        token: String
     ): Flow<PagingData<Story>> {
         return flow {
             try {
@@ -108,7 +107,6 @@ class StoryRepository(
                         localDataSource,
                         remoteDataSource,
                         location,
-                        token
                     ),
                     pagingSourceFactory = {
                         localDataSource.getAllStories()
@@ -123,10 +121,32 @@ class StoryRepository(
         }
     }
 
-    override fun getStoryDetail(id: String, token: String): Flow<Resource<StoryDetails>> {
+    override fun getStoriesWithLocation(): Flow<Resource<List<Story>>> {
+        return  flow {
+            remoteDataSource.getStoriesWithLocation().collect { apiResponse ->
+                when (apiResponse) {
+                    is ApiResponse.Success -> {
+                        val stories = DataMapper.mapResponseToDomain(apiResponse.data)
+                        emit(Resource.Success(stories))
+                    }
+
+                    is ApiResponse.Empty -> {
+                        emit(Resource.Success(emptyList()))
+                    }
+
+                    is ApiResponse.Error -> {
+                        emit(Resource.Error(apiResponse.errorMessage))
+                    }
+                }
+
+            }
+        }
+    }
+
+    override fun getStoryDetail(id: String): Flow<Resource<StoryDetails>> {
         return flow {
             emit(Resource.Loading())
-            remoteDataSource.getStoryDetail(id, token).collect { apiResponse ->
+            remoteDataSource.getStoryDetail(id).collect { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Success -> {
                         val storyDetail = DataMapper.mapStoryDetailToDomain(apiResponse.data)
@@ -150,7 +170,6 @@ class StoryRepository(
         description: String,
         lat: Double?,
         long: Double?,
-        token: String
     ): Flow<Resource<AddNewStoryResponse>> {
         return flow {
             emit(Resource.Loading())
@@ -168,7 +187,6 @@ class StoryRepository(
                 requestDescription,
                 requestLat,
                 requestLong,
-                token
             ).collect { apiResponse ->
                 when (apiResponse) {
                     is ApiResponse.Success -> {

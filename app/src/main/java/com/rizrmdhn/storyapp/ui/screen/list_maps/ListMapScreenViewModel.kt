@@ -1,4 +1,4 @@
-package com.rizrmdhn.storyapp.ui.screen.maps
+package com.rizrmdhn.storyapp.ui.screen.list_maps
 
 import android.Manifest
 import android.content.Context
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 
-class MapScreenViewModel(
+class ListMapScreenViewModel(
     private val storyUseCase: StoryUseCase
 ) : ViewModel() {
     private val _currentLocation: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
@@ -25,6 +25,10 @@ class MapScreenViewModel(
 
     private val _myLocation: MutableStateFlow<LatLng> = MutableStateFlow(LatLng(0.0, 0.0))
     val myLocation: StateFlow<LatLng> get() = _myLocation
+
+    private val _stories: MutableStateFlow<Resource<List<Story>>> = MutableStateFlow(Resource.Loading())
+
+    val stories: StateFlow<Resource<List<Story>>> get() = _stories
 
     fun setCurrentLocation(latLng: LatLng) {
         _currentLocation.value = latLng
@@ -49,6 +53,15 @@ class MapScreenViewModel(
                 if (location != null) {
                     setMyLocation(LatLng(location.latitude, location.longitude))
                 }
+            }
+        }
+    }
+
+    fun getStoriesWithLocation() {
+        viewModelScope.launch {
+            _stories.value = Resource.Loading()
+            storyUseCase.getStoriesWithLocation().collect {
+                _stories.value = it
             }
         }
     }

@@ -52,7 +52,7 @@ class DetailScreenViewModelTest {
         // Mock use case behavior
         `when`(useCase.getLocationSetting()).thenReturn(MutableStateFlow(0))
         `when`(useCase.getAccessToken()).thenReturn(MutableStateFlow("token"))
-        `when`(useCase.getStoryDetail("1", "Bearer token")).thenReturn(expectedFlow)
+        `when`(useCase.getStoryDetail("1")).thenReturn(expectedFlow)
 
         launch {
             viewModel.getLocationSetting()
@@ -64,7 +64,7 @@ class DetailScreenViewModelTest {
 
         val actualFlow = viewModel.state
 
-        Mockito.verify(useCase).getStoryDetail("1", "Bearer token")
+        Mockito.verify(useCase).getStoryDetail("1")
 
         Assert.assertTrue(actualFlow.value is Resource.Success)
         Assert.assertEquals(expectedDetails, actualFlow.value.data)

@@ -91,25 +91,46 @@ class RemoteDataSource(
         page: Int,
         size: Int,
         location: Int,
-        token: String
     ): List<ListStoryItem> {
         return apiService.getStories(
             page,
             size,
             location,
-            token
         ).listStory
+    }
+
+    fun getStoriesWithLocation(): Flow<ApiResponse<List<ListStoryItem>>> {
+        return flow {
+            try {
+                val response = apiService.getStoriesWithLocation()
+                val data = response.listStory
+                emit(ApiResponse.Success(data))
+            } catch (e: Exception) {
+                if (e is HttpException) {
+                    val exception: HttpException = e
+                    val response = exception.response()
+                    try {
+                        val jsonObject = JSONObject(response?.errorBody()?.string() ?: "Error")
+                        emit(ApiResponse.Error(jsonObject.optString("message")))
+                    } catch (e1: JSONException) {
+                        e1.printStackTrace()
+                    } catch (e1: IOException) {
+                        e1.printStackTrace()
+                    }
+                } else {
+                    emit(ApiResponse.Error(e.toString()))
+                }
+            }
+        }.flowOn(Dispatchers.IO)
     }
 
     fun getStoryDetail(
         id: String,
-        token: String
     ): Flow<ApiResponse<DetailStory>> {
         return flow {
             try {
                 val response = apiService.getStoryDetail(
                     id,
-                    token
                 )
                 val data = response.story
                 emit(ApiResponse.Success(data))
@@ -137,7 +158,6 @@ class RemoteDataSource(
         description: RequestBody,
         lat: RequestBody?,
         long: RequestBody?,
-        token: String,
     ): Flow<ApiResponse<AddNewStoryResponse>> {
         return flow {
             try {
@@ -146,7 +166,6 @@ class RemoteDataSource(
                     description,
                     lat,
                     long,
-                    token
                 )
                 if (response.error) {
                     emit(ApiResponse.Error(response.message))

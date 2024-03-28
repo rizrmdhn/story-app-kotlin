@@ -31,6 +31,7 @@ import com.rizrmdhn.storyapp.ui.screen.about.AboutScreen
 import com.rizrmdhn.storyapp.ui.screen.add.AddScreenWithLocation
 import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreen
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreen
+import com.rizrmdhn.storyapp.ui.screen.list_maps.ListMapScreen
 import com.rizrmdhn.storyapp.ui.screen.loading.LoadingScreen
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreen
 import com.rizrmdhn.storyapp.ui.screen.maps.MapScreen
@@ -246,23 +247,31 @@ fun StoryApp(
                             }
                             composable(
                                 route = Screen.Map.route,
-                                arguments = listOf(navArgument(Constants.LAT) {
-                                    type = NavType.StringType
-                                }, navArgument(Constants.LNG) {
-                                    type = NavType.StringType
-                                },
+                                arguments = listOf(
+                                    navArgument(Constants.LAT) {
+                                        type = NavType.StringType
+                                    },
+                                    navArgument(Constants.LNG) {
+                                        type = NavType.StringType
+                                    },
                                     navArgument(Constants.IS_LOCATION_ENABLED) {
                                         type = NavType.StringType
-                                    })
+                                    },
+                                )
                             ) {
-                                val lat = it.arguments?.getString(Constants.LAT) ?: ""
-                                val lng = it.arguments?.getString(Constants.LNG) ?: ""
+                                val lat = it.arguments?.getString(Constants.LAT) ?: "0"
+                                val lng = it.arguments?.getString(Constants.LNG) ?: "0"
                                 val isLocationEnabled =
                                     it.arguments?.getString(Constants.IS_LOCATION_ENABLED) ?: ""
                                 MapScreen(
                                     location = LatLng(lat.toDouble(), lng.toDouble()),
                                     isLocationEnabled = isLocationEnabled.toBoolean(),
                                 )
+                            }
+                            composable(
+                                Screen.ListMap.route
+                            ) {
+                                ListMapScreen()
                             }
                             composable(
                                 route = Screen.DetailStory.route,

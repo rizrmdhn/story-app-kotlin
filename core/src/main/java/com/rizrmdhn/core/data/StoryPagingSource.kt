@@ -16,7 +16,6 @@ class StoryPagingSource(
     private val localDataSource: LocalDataSource,
     private val remoteDataSource: RemoteDataSource,
     private val location: Int,
-    private val token: String
 ) : RemoteMediator<Int, Story>() {
     private companion object {
         const val INITIAL_PAGE = 1
@@ -47,7 +46,7 @@ class StoryPagingSource(
         }
 
         return try {
-            val response = remoteDataSource.getStories(page, state.config.pageSize, location, token)
+            val response = remoteDataSource.getStories(page, state.config.pageSize, location)
             val isEndOfList = response.isEmpty()
 
             if (loadType == LoadType.REFRESH) {

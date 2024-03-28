@@ -11,7 +11,10 @@ import com.rizrmdhn.core.data.source.remote.RemoteDataSource
 import com.rizrmdhn.core.data.source.remote.network.ApiService
 import com.rizrmdhn.core.domain.repository.IStoryRepository
 import com.rizrmdhn.core.utils.AppExecutors
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import okhttp3.CertificatePinner
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -52,6 +55,15 @@ val networkModule = module {
             )
             .build()
 
+        val authInterceptor = Interceptor { chain ->
+            val req = chain.request()
+            val token = runBlocking { get<SettingPreferences>().getAuthToken().first() }
+            val requestHeaders = req.newBuilder()
+                .addHeader("Authorization", "Bearer $token")
+                .build()
+            chain.proceed(requestHeaders)
+        }
+
         OkHttpClient.Builder()
             .addInterceptor(
                 if (BuildConfig.DEBUG) HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -62,6 +74,7 @@ val networkModule = module {
             .connectTimeout(120, TimeUnit.SECONDS)
             .readTimeout(120, TimeUnit.SECONDS)
             .certificatePinner(certificatePinner)
+            .addInterceptor(authInterceptor)
             .build()
     }
     single {

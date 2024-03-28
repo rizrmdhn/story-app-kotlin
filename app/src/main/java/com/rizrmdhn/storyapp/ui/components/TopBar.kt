@@ -20,6 +20,7 @@ import com.rizrmdhn.storyapp.R
 fun TopBar(
     locationSwitch: () -> Unit,
     isLocationOn: Boolean,
+    navigateToMap: () -> Unit,
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit
 ) {
@@ -39,6 +40,20 @@ fun TopBar(
                     ),
                     contentDescription =  "Location"
                 )
+            }
+            if (isLocationOn) {
+                IconButton(
+                    onClick = {
+                        navigateToMap()
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(
+                            R.drawable.baseline_map_24
+                        ),
+                        contentDescription = "Info"
+                    )
+                }
             }
             IconButton(
                 onClick = {

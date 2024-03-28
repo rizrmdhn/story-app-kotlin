@@ -23,24 +23,23 @@ class StoryInteractor(
     override fun getStories(
         page: Int,
         location: Int,
-        token: String
-    ) = storyRepository.getStories(page,  location, token)
+    ) = storyRepository.getStories(page,  location)
 
-    override fun getStoryDetail(id: String, token: String) =
-        storyRepository.getStoryDetail(id, token)
+    override fun getStoriesWithLocation() = storyRepository.getStoriesWithLocation()
+
+    override fun getStoryDetail(id: String) =
+        storyRepository.getStoryDetail(id)
 
     override fun addNewStory(
         file: File,
         description: String,
         lat: Double?,
-        long: Double?,
-        token: String
+        long: Double?
     ) = storyRepository.addNewStory(
         file,
         description,
         lat,
-        long,
-        token
+        long
     )
 
     override fun getDarkMode() = storyRepository.getDarkMode()

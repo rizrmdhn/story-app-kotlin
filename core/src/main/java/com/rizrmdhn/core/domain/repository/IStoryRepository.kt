@@ -19,16 +19,17 @@ interface IStoryRepository {
         password: String
     ): Flow<Resource<RegisterResponse>>
 
-    fun getStories(page: Int, location: Int, token: String): Flow<PagingData<Story>>
+    fun getStories(page: Int, location: Int): Flow<PagingData<Story>>
 
-    fun getStoryDetail(id: String, token: String): Flow<Resource<StoryDetails>>
+    fun getStoriesWithLocation(): Flow<Resource<List<Story>>>
+
+    fun getStoryDetail(id: String): Flow<Resource<StoryDetails>>
 
     fun addNewStory(
         file: File,
         description: String,
         lat: Double?,
-        long: Double?,
-        token: String
+        long: Double?
     ): Flow<Resource<AddNewStoryResponse>>
 
     fun getDarkMode(): Flow<Boolean>

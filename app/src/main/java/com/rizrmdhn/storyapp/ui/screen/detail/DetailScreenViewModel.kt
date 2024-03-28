@@ -30,7 +30,7 @@ class DetailScreenViewModel(
     fun getStoryDetail(id: String) {
         viewModelScope.launch {
             _state.value = Resource.Loading()
-            storyUseCase.getStoryDetail(id, token.value).catch {
+            storyUseCase.getStoryDetail(id).catch {
                 _state.value = Resource.Error(it.message.toString())
             }.collect {
                 _state.value = it

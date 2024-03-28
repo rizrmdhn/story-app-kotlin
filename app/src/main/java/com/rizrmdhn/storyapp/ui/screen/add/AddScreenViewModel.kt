@@ -69,7 +69,7 @@ class AddScreenViewModel(
             }
            setUploadStatus(true)
 
-            storyUseCase.addNewStory(fileData, description.value, currentLocation.value.latitude, currentLocation.value.longitude, token.value).catch {
+            storyUseCase.addNewStory(fileData, description.value, currentLocation.value.latitude, currentLocation.value.longitude).catch {
                 Toast.makeText(context, "Error When Uploading Stories", Toast.LENGTH_SHORT).show()
                 setUploadStatus(false)
             }.collect {

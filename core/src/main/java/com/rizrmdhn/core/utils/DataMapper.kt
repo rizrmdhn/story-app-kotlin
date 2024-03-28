@@ -26,6 +26,19 @@ object DataMapper {
         return storyList
     }
 
+    fun mapResponseToDomain(input: List<ListStoryItem>): List<Story> =
+        input.map {
+            Story(
+                id = it.id,
+                createdAt = it.createdAt,
+                name = it.name,
+                description = it.description,
+                lat = it.lat,
+                lon = it.lon,
+                photoUrl = it.photoUrl,
+            )
+        }
+
     fun mapStoryDetailToDomain(input: DetailStory) = StoryDetails(
         id = input.id,
         createdAt = input.createdAt,

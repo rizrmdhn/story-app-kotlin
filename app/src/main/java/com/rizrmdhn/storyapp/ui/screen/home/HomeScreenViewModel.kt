@@ -18,9 +18,6 @@ class HomeScreenViewModel(
     private val _state: MutableStateFlow<PagingData<Story>> = MutableStateFlow(PagingData.empty())
     val state: StateFlow<PagingData<Story>> get() = _state
 
-    private val _token: MutableStateFlow<String> = MutableStateFlow("")
-    private val token: StateFlow<String> get() = _token
-
     private val _page: MutableStateFlow<Int> = MutableStateFlow(1)
     private val page: StateFlow<Int> get() = _page
 
@@ -29,7 +26,6 @@ class HomeScreenViewModel(
 
 
     init {
-        getAccessToken()
         getLocationSetting()
         getStories()
     }
@@ -37,11 +33,10 @@ class HomeScreenViewModel(
 
     fun getStories() {
         viewModelScope.launch {
-            getAccessToken()
             _state.value = PagingData.empty()
             if (location.value == 1) {
                 storyUseCase.getStories(
-                    page = page.value, location = 1, token = token.value
+                    page = page.value, location = 1
                 ).catch {
                     _state.value = PagingData.empty()
                 }.cachedIn(viewModelScope).collect {
@@ -49,7 +44,7 @@ class HomeScreenViewModel(
                 }
             } else {
                 storyUseCase.getStories(
-                    page = page.value, location = 0, token = token.value
+                    page = page.value, location = 0
                 ).catch {
                     _state.value = PagingData.empty()
                 }.cachedIn(viewModelScope).collect {
@@ -78,16 +73,6 @@ class HomeScreenViewModel(
                 _location.value = 0
             }.collect {
                 _location.value = it
-            }
-        }
-    }
-
-    fun getAccessToken() {
-        viewModelScope.launch {
-            storyUseCase.getAccessToken().catch {
-                _token.value = it.message.toString()
-            }.collect {
-                _token.value = "Bearer $it"
             }
         }
     }

@@ -79,6 +79,7 @@ fun HomeScreen(
     viewModel.state.collectAsLazyPagingItems().apply {
         when (loadState.refresh) {
             is LoadState.Loading -> {
+                viewModel.getStories()
                 Scaffold(
                     topBar = {
                         TopBar(
@@ -108,6 +109,9 @@ fun HomeScreen(
                                         }
                                     )
                                 }
+                            },
+                            navigateToMap = {
+                                navController.navigate(Screen.ListMap.route)
                             },
                             navigateToAbout = {
                                 navController.navigate(Screen.About.route)
@@ -170,6 +174,7 @@ fun HomeScreen(
                     story = this,
                     navigateToAbout = { navController.navigate(Screen.About.route) },
                     navigateToSettings = { navController.navigate(Screen.Settings.route) },
+                    navigateToMap = { navController.navigate(Screen.ListMap.route) },
                     navigateToDetail = { id ->
                         navController.navigate(Screen.DetailStory.createRoute(id))
                     },
@@ -219,6 +224,7 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     navigateToAbout: () -> Unit,
     navigateToSettings: () -> Unit,
+    navigateToMap: () -> Unit,
     navigateToDetail: (String) -> Unit,
     navigateToAdd: () -> Unit,
     listState: LazyListState
@@ -230,6 +236,7 @@ fun HomeContent(
                 isLocationOn = isLocationOn,
                 locationSwitch = locationSwitch,
                 navigateToAbout = navigateToAbout,
+                navigateToMap = navigateToMap,
                 navigateToSettings = navigateToSettings
             )
         },

@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
-import androidx.navigation.NavController
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -27,15 +25,14 @@ import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.google.maps.android.ktx.model.cameraPosition
 import com.rizrmdhn.core.ui.theme.StoryAppTheme
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MapScreen(
     viewModel: MapScreenViewModel = koinViewModel(),
-    context: Context = LocalContext.current,
     location: LatLng,
+    context: Context = LocalContext.current,
     isLocationEnabled: Boolean,
 ) {
     val currentLocation by viewModel.currentLocation.collectAsState()
@@ -73,6 +70,7 @@ fun MapScreenContent(
             15f
         )
     }
+
 
     LaunchedEffect(key1 = location) {
         if (location != LatLng(0.0, 0.0)) {

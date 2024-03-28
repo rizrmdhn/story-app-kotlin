@@ -7,6 +7,7 @@ import com.rizrmdhn.storyapp.ui.screen.add.AddScreenViewModel
 import com.rizrmdhn.storyapp.ui.screen.detail.DetailScreenViewModel
 import com.rizrmdhn.storyapp.ui.screen.home.HomeScreenViewModel
 import com.rizrmdhn.storyapp.ui.screen.login.LoginScreenViewModel
+import com.rizrmdhn.storyapp.ui.screen.list_maps.ListMapScreenViewModel
 import com.rizrmdhn.storyapp.ui.screen.maps.MapScreenViewModel
 import com.rizrmdhn.storyapp.ui.screen.register.RegisterScreenViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,6 +23,7 @@ val viewModelModule = module {
     viewModel { HomeScreenViewModel(get()) }
     viewModel { DetailScreenViewModel(get()) }
     viewModel { AddScreenViewModel(get()) }
-    viewModel { MapScreenViewModel() }
+    viewModel { MapScreenViewModel(get()) }
+    viewModel { ListMapScreenViewModel(get()) }
     viewModel { StoryAppViewModel(get()) }
 }
