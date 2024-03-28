@@ -11,16 +11,7 @@
       <entry key="core">
         <State />
       </entry>
-      <entry key="loginScreen_isDisplayed() (1)">
-        <State />
-      </entry>
-      <entry key="loginScreen_typeEmail_withInvalidEmail()">
-        <State />
-      </entry>
       <entry key="login_withInvalidEmail()">
-        <State />
-      </entry>
-      <entry key="navHost_verifyStartDestination()">
         <State />
       </entry>
       <entry key="navigateToRegister()">

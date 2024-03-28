@@ -43,7 +43,7 @@ class SettingPreferences(
 
     fun getAuthToken(): Flow<String> {
         return dataStore.data.map { preferences ->
-            preferences[authKey] ?: ""
+            preferences[authKey]  ?: ""
         }
     }
 

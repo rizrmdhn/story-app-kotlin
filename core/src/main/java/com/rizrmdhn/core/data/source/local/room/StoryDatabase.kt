@@ -10,7 +10,7 @@ import com.rizrmdhn.core.data.source.local.entity.StoryEntity
         StoryEntity::class,
         RemoteKeys::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class StoryDatabase : RoomDatabase() {

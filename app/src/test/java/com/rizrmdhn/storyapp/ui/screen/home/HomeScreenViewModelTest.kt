@@ -112,6 +112,39 @@ class HomeScreenViewModelTest {
         Assert.assertEquals(dummyStories.size, differ.snapshot().items.size)
     }
 
+    @Test
+    fun `getStories should return the same first story`() = runTest {
+        val data: PagingData<Story> = StoryPagingSource.snapshot(dummyStories)
+        val expectedStories = MutableStateFlow<PagingData<Story>>(PagingData.empty())
+        expectedStories.value = data
+
+        Mockito.`when`(useCase.getLocationSetting()).thenReturn(MutableStateFlow(1))
+        Mockito.`when`(useCase.getAccessToken()).thenReturn(MutableStateFlow("token"))
+        Mockito.`when`(useCase.getStories(1, 1, "Bearer token")).thenReturn(expectedStories)
+
+        launch {
+            viewModel.getAccessToken()
+            viewModel.getLocationSetting()
+            viewModel.getStories()
+        }
+
+        advanceUntilIdle()
+
+        val differ = AsyncPagingDataDiffer(
+            diffCallback = TestDiffCallback<Story>(),
+            updateCallback = noopListUpdateCallback,
+            workerDispatcher = Dispatchers.Main
+        )
+
+
+        val actualData = viewModel.state
+        differ.submitData(actualData.value)
+
+        Mockito.verify(useCase).getStories(1, 1, "Bearer token")
+
+        Assert.assertEquals(dummyStories[0], differ.snapshot().items[0])
+    }
+
 
     @Test
     fun `locationSwitched should return 1`() = runTest {

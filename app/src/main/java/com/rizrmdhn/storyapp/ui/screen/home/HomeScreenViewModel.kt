@@ -1,5 +1,6 @@
 package com.rizrmdhn.storyapp.ui.screen.home
 
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -28,8 +29,8 @@ class HomeScreenViewModel(
 
 
     init {
-        getLocationSetting()
         getAccessToken()
+        getLocationSetting()
         getStories()
     }
 
