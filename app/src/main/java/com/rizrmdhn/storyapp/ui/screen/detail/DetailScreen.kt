@@ -125,7 +125,7 @@ fun DetailScreen(
                                 )
                             )
                         },
-                        location = location == 1
+                        location = it.lon != null && it.lat != null
                     )
                 }
             }
